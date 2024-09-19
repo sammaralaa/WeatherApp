@@ -1,9 +1,6 @@
 package com.example.weatherproject
-
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 
 @Entity(tableName = "weather_data")
 data class WheatherModel(var lat : Double,
@@ -17,8 +14,7 @@ data class WheatherModel(var lat : Double,
                          var dt : Int,
                          var dt_iso:String,
                          var timezone:Int
-    ){
-}
+    ){}
 
 data class Clouds(var all : Int)
 
