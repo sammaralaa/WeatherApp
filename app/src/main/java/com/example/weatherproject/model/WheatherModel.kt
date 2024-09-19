@@ -1,13 +1,13 @@
-package com.example.weatherproject
+package com.example.weatherproject.model
 import androidx.room.Embedded
 import androidx.room.Entity
 
 @Entity(tableName = "weather_data")
 data class WheatherModel(var lat : Double,
                          var lon :Double,
-                         @Embedded var main :Main,
-                         @Embedded var wind :Wind,
-                         @Embedded var rain :Rain,
+                         @Embedded var main : Main,
+                         @Embedded var wind : Wind,
+                         @Embedded var rain : Rain,
                          @Embedded var clouds : Clouds,
                          @Embedded val weather: ArrayList<Weather>,
                          var visibility : Int,
