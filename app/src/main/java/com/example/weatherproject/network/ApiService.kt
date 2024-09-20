@@ -1,7 +1,10 @@
 package com.example.weatherproject.network
 
-import com.example.weatherproject.model.WeatherResponse
+import com.example.weatherproject.model.CloudsResponse
+import com.example.weatherproject.model.CurrentWeatherResponse
+import com.example.weatherproject.model.MainResponse
 import com.example.weatherproject.model.WheatherModel
+import com.example.weatherproject.model.WindResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,16 +12,35 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("data/2.5/weather")
-    fun getCurrentWeather(
+    @GET("weather")
+    suspend fun getCurrentWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
-        @Query("appid") apiKey: String
-    ): Response<WeatherResponse>
+        @Query("appid") apiKey: String): Response<CurrentWeatherResponse>
+
+    @GET("main")
+    suspend fun getMain(@Query("lat") latitude: Double,
+                        @Query("lon") longitude: Double,
+                        @Query("appid") apiKey: String):Response<MainResponse>
+
+    @GET("wind")
+    suspend fun getWind(@Query("lat") latitude: Double,
+                        @Query("lon") longitude: Double,
+                        @Query("appid") apiKey: String):Response<WindResponse>
+
+    @GET("clouds")
+    suspend fun getClouds(@Query("lat") latitude: Double,
+                        @Query("lon") longitude: Double,
+                        @Query("appid") apiKey: String):Response<CloudsResponse>
+
+    @GET("name")
+    suspend fun getCityName(@Query("lat") latitude: Double,
+                        @Query("lon") longitude: Double,
+                        @Query("appid") apiKey: String):Response<String>
 }
-//https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=
 object RetrofitHelper {
-    val BASE_URL : String = "https://api.openweathermap.org/"
+
+    val BASE_URL : String = "https://api.openweathermap.org/data/2.5/"
     val retrofitInstance = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)

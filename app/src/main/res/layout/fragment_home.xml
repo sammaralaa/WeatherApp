@@ -23,11 +23,11 @@
 
                 <!-- Weather icon and temperature -->
                 <ImageView
-                    android:layout_width="240dp"
-                    android:layout_height="240dp"
-                    android:src="@drawable/weather"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="center"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="206dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/weather" />
 
                 <!-- Temperature Text -->
                 <TextView

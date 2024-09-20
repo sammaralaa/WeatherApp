@@ -1,11 +1,10 @@
 package com.example.weatherproject.model
-import androidx.room.Embedded
 import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "weather_data")
 data class WheatherModel(  val coord: Coord,
-                           val weather: List<Weather>,
+                           val weather: ArrayList<Weather>,
                            val base: String,
                            val main: Main,
                            val visibility: Int,
