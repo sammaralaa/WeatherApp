@@ -1,9 +1,11 @@
 package com.example.weatherproject
 
 import android.os.Bundle
-import androidx.appcompat.app.ActionBar
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -24,13 +26,9 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         navigationView = binding.navigationLayout
         drawerLayout = binding.drawerLayout
-//        var actionBar: ActionBar? = supportActionBar
-//        actionBar?.setHomeAsUpIndicator(R.drawable.baseline_menu_24)
-//        actionBar?.setDisplayHomeAsUpEnabled(true)
-//        actionBar?.setDisplayShowHomeEnabled(true)
+
         setSupportActionBar(binding.toolbar)
 
-        // Configure ActionBarDrawerToggle to handle opening and closing of the drawer
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -45,11 +43,21 @@ class HomeActivity : AppCompatActivity() {
             binding.drawerLayout
         )
 
-        // Automatically update the title in ActionBar based on the fragment label
         var navController: NavController =
             Navigation.findNavController(this@HomeActivity, R.id.nav_host_fragment)
         setupWithNavController(navigationView, navController)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        //navigationView.itemBackground = R.drawable.nav_item_background.toDrawable()
 
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

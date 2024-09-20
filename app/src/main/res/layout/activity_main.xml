@@ -4,71 +4,71 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        >
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:gravity="center_horizontal"-->
+<!--        >-->
 
-        <!-- Weather icon and temperature -->
-        <ImageView
-            android:id="@+id/weatherIcon"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
-            android:src="@drawable/weather"
-        android:layout_marginTop="16dp"
-        android:layout_gravity="center"/>
+<!--        &lt;!&ndash; Weather icon and temperature &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/weatherIcon"-->
+<!--            android:layout_width="240dp"-->
+<!--            android:layout_height="240dp"-->
+<!--            android:src="@drawable/weather"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_gravity="center"/>-->
 
-        <!-- Temperature Text -->
-        <TextView
-            android:id="@+id/temperatureText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="19°"
-            android:textSize="56sp"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"/>
+<!--        &lt;!&ndash; Temperature Text &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/temperatureText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="19°"-->
+<!--            android:textSize="56sp"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:layout_marginTop="16dp"/>-->
 
-        <!-- Precipitation and Temperature Range -->
-        <TextView
-            android:id="@+id/precipitationText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Precipitations"
-            android:textSize="20dp"
-            android:textColor="#FFFFFF"/>
+<!--        &lt;!&ndash; Precipitation and Temperature Range &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:id="@+id/precipitationText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Precipitations"-->
+<!--            android:textSize="20dp"-->
+<!--            android:textColor="#FFFFFF"/>-->
 
-        <TextView
-            android:id="@+id/maxMinTemperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Max: 24°  Min: 18°"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="4dp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/maxMinTemperature"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Max: 24°  Min: 18°"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:layout_marginTop="4dp"/>-->
 
-        <!-- House Image -->
-        <ImageView
-            android:id="@+id/houseImage"
-            android:layout_width="340dp"
-            android:layout_height="200dp"
-            android:src="@drawable/house"
-        android:layout_marginTop="16dp"
-        android:contentDescription="House image"/>
+<!--        &lt;!&ndash; House Image &ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/houseImage"-->
+<!--            android:layout_width="340dp"-->
+<!--            android:layout_height="200dp"-->
+<!--            android:src="@drawable/house"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:contentDescription="House image"/>-->
 
-        <!-- Horizontal Scroll View for hourly forecast -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Today"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:layout_marginTop="16dp"/>
+<!--        &lt;!&ndash; Horizontal Scroll View for hourly forecast &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Today"-->
+<!--            android:textColor="#FFFFFF"-->
+<!--            android:textSize="18sp"-->
+<!--            android:layout_marginTop="16dp"/>-->
 
 
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
 
     </ScrollView>
