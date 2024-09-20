@@ -1,6 +1,7 @@
 package com.example.weatherproject.network
 
-import com.example.weatherproject.model.WheatherResponse
+import com.example.weatherproject.model.WeatherResponse
+import com.example.weatherproject.model.WheatherModel
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,7 +14,7 @@ interface ApiService {
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("appid") apiKey: String
-    ): Response<WheatherResponse>
+    ): Response<WeatherResponse>
 }
 //https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=
 object RetrofitHelper {
