@@ -18,7 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/screenshot"
+
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:gravity="center"
             app:titleTextColor="@color/white"
