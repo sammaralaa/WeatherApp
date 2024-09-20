@@ -3,22 +3,23 @@
 
     <group >
         <item
-            android:id="@+id/home"
+            android:id="@+id/homeFragment"
             android:title="@string/home"
             android:icon="@drawable/baseline_home_24"
             />
         <item
-            android:id="@+id/favorite"
+            android:id="@+id/favoriteFragment"
             android:title="@string/favorites"
             android:icon="@drawable/baseline_favorite_24"
 
             />
         <item
-            android:id="@+id/alerts"
+            android:id="@+id/alertsFragment"
             android:title="@string/alerts"
             android:icon="@drawable/baseline_add_alert_24"
             />
         <item
+            android:id="@+id/settingsFragment"
             android:title="@string/settings"
             android:icon="@drawable/baseline_settings_24"
             />

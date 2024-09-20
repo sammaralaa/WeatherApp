@@ -1,6 +1,7 @@
 package com.example.weatherproject
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 //            Log.i("TAG", "onCreate: ${Wheather?.timezone}")
 //            Log.i("TAG", "onCreate: ${Wheather?.wind?.deg}")
 //        }
-
+        var intent : Intent = Intent(this@MainActivity,HomeActivity::class.java)
+       startActivity(intent)
     }
 }
