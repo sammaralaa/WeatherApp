@@ -82,5 +82,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.1.0")
 
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
-
+    //ok http
+    implementation ("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }

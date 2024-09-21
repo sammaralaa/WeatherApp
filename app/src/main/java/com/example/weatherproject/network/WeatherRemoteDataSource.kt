@@ -5,16 +5,18 @@ import com.example.weatherproject.model.Clouds
 import com.example.weatherproject.model.CurrentWeatherResponse
 import com.example.weatherproject.model.Main
 import com.example.weatherproject.model.Weather
+import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.WheatherModel
 import com.example.weatherproject.model.Wind
 import retrofit2.Response
 
 class WeatherRemoteDataSource(var apiObj : ApiService) {
     val API_KEY = "7f6dd0097b5662feed4455238a1321a5"
-    suspend fun getCurrentWeather(lat: Double, lon: Double): List<Weather>? {
+
+    suspend fun getCurrentWeather(lat: Double, lon: Double): WeatherResponse? {
         val response = apiObj.getCurrentWeather(lat, lon, API_KEY)
         return if (response.isSuccessful) {
-            response.body()?.weather
+            response.body()
         } else {
             Log.i("TAG", "getCurrentWeather: onFailure")
             null
@@ -36,7 +38,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         return if (response.isSuccessful) {
             response.body()?.wind
         } else {
-            Log.i("TAG", "getMain: onFailure")
+            Log.i("TAG", "getWind: onFailure")
             null
         }
     }
@@ -46,7 +48,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         return if (response.isSuccessful) {
             response.body()?.clouds
         } else {
-            Log.i("TAG", "getMain: onFailure")
+            Log.i("TAG", "getClouds: onFailure")
             null
         }
     }
@@ -56,7 +58,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         return if (response.isSuccessful) {
             response.body()
         } else {
-            Log.i("TAG", "getMain: onFailure")
+            Log.i("TAG", "getCityName: onFailure")
             null
         }
     }
