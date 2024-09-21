@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.weatherproject.HomeFragment"
+        android:name="com.example.weatherproject.view.HomeFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -16,22 +16,22 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.weatherproject.SettingsFragment"
+        android:name="com.example.weatherproject.view.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/alertsFragment"
-        android:name="com.example.weatherproject.AlertsFragment"
+        android:name="com.example.weatherproject.view.AlertsFragment"
         android:label="@string/alerts"
         tools:layout="@layout/fragment_alerts" />
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.example.weatherproject.FavoriteFragment"
+        android:name="com.example.weatherproject.view.FavoriteFragment"
         android:label="@string/favorites"
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.weatherproject.MapFragment"
+        android:name="com.example.weatherproject.view.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
         <action

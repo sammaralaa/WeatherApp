@@ -1,4 +1,4 @@
-package com.example.weatherproject
+package com.example.weatherproject.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -20,13 +20,13 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.edit
-import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.weatherproject.view.view_model.home.HomeFragmentViewModel
+import com.example.weatherproject.view.view_model.home.HomeFragmentViewModelFactory
+import com.example.weatherproject.R
+import com.example.weatherproject.view.view_model.home.REQUEST_LOCATION_CODE
 import com.example.weatherproject.model.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.network.RetrofitHelper
@@ -126,7 +126,8 @@ class HomeFragment : Fragment() {
                             }
                         }else{
                             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                                REQUEST_LOCATION_CODE)
+                                REQUEST_LOCATION_CODE
+                            )
                         }
                     }
                     1 -> {

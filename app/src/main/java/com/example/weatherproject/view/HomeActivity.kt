@@ -1,14 +1,9 @@
-package com.example.weatherproject
+package com.example.weatherproject.view
 
-import android.content.Context
-import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -16,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.setupWithNavController
+import com.example.weatherproject.R
 import com.example.weatherproject.databinding.ActivityHomeBinding
 import com.google.android.material.navigation.NavigationView
 
@@ -43,7 +39,12 @@ class HomeActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.homeFragment, R.id.settingsFragment,R.id.alertsFragment,R.id.favoriteFragment),
+            setOf(
+                R.id.homeFragment,
+                R.id.settingsFragment,
+                R.id.alertsFragment,
+                R.id.favoriteFragment
+            ),
             binding.drawerLayout
         )
 
