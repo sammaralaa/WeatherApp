@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.model.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.network.RetrofitHelper
@@ -115,7 +116,7 @@ class HomeFragment : Fragment() {
                     }
                     1 -> {
                         // Enter Location Manually
-
+                        findNavController().navigate(R.id.action_homeFragment_to_mapFragment)
                     }
                 }
             }

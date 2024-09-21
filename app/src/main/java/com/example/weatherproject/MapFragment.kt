@@ -1,7 +1,9 @@
 package com.example.weatherproject
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -9,12 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.weatherproject.databinding.FragmentMapBinding
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 
 class MapFragment : Fragment() {
     lateinit var _binding: FragmentMapBinding
+    lateinit var mapView: MapView
    // private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,30 +40,42 @@ class MapFragment : Fragment() {
         Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
 
         // Initialize the MapView
-        val mapView = _binding.map // Access the map view using view binding
+         mapView = _binding.map // Access the map view using view binding
         mapView.setMultiTouchControls(true)
-        mapView.controller.setZoom(15.0)
+        mapView.controller.setZoom(8.0)
 
 //        // Set a default location
 //        val startPoint = GeoPoint(44.34, 10.99) // Example coordinates
 //        mapView.controller.setCenter(startPoint)
 
-        // Set a touch listener for the map
-        mapView.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                // Get GeoPoint from the touch location
-                val geoPoint: GeoPoint = mapView.projection.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
-                val lat = geoPoint.latitude
-                val lon = geoPoint.longitude
+        addMapClickListener()
+    }
+    private fun addMapClickListener() {
+        val mapEventsReceiver = object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                // Handle single tap here
+                p?.let {
+                   // val geoPoint: GeoPoint = mapView.projection.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
+                    val lat = p.latitude
+                    val lon = p.longitude
 
-                // Add a marker at the selected location
-                addMarker(geoPoint)
-
-                // Log or use the selected coordinates
-                println("Selected Location: Lat: $lat, Lon: $lon")
+                    // Add a marker at the selected location
+                    // addMarker(geoPoint)
+                    saveData("lon",lon)
+                    saveData("lat",lat)
+                    Log.i("TAG", "onViewCreated: Selected Location: Lat: $lat, Lon: $lon")
+                }
+                return true // return true if event is handled
             }
-            false
+
+            override fun longPressHelper(p: GeoPoint?): Boolean {
+                return false
+            }
         }
+
+        // Create an overlay to handle map events
+        val overlayEvents = MapEventsOverlay(mapEventsReceiver)
+        mapView.overlays.add(overlayEvents)
     }
     private fun addMarker(point: GeoPoint) {
         val marker = Marker(_binding.map)
@@ -82,5 +100,13 @@ class MapFragment : Fragment() {
         super.onPause()
         _binding.map.onPause()
     }
-
+    private fun saveData(key: String, value: Double) {
+        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putFloat(key, value.toFloat())
+        editor.apply() // or editor.commit() for synchronous saving
+        Log.i("TAG", "saveData: $key == $value ")
+    }
+/*  FavoriteFragmentDirections.ActionFavoriteFragmentToFavMealDetailsFragment action = FavoriteFragmentDirections.actionFavoriteFragmentToFavMealDetailsFragment(meal);
+        Navigation.findNavController(this.getView()).navigate(action);*/
 }
