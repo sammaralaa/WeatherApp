@@ -27,7 +27,7 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
      var w :WeatherResponse? = null
     var wind : Wind? = null
     init {
-        getCurrentWeather(10.99,44.34)
+       // getCurrentWeather(10.99,44.34)
     }
     fun getCurrentWeather(lat: Double, lon: Double) {
        viewModelScope.launch(Dispatchers.IO){

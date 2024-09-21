@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -46,6 +47,7 @@ class HomeFragment : Fragment() {
     private lateinit var allFactory: HomeFragmentViewModelFactory
     lateinit var desc : TextView
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    private val KEY = "selected"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -80,7 +82,7 @@ class HomeFragment : Fragment() {
             )
         )
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
-        viewModel.getCurrentWeather(10.99, 44.34)
+       // viewModel.getCurrentWeather(10.99, 44.34)
 
         viewModel.weather.observe(viewLifecycleOwner) { w ->
             Log.i("TAG", "onHomeFragment: ${w?.wind?.deg}")
@@ -90,7 +92,20 @@ class HomeFragment : Fragment() {
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onStart() {
         super.onStart()
-        showLocationDialog()
+        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        if(sharedPreferences.contains(KEY)){
+            if(sharedPreferences.contains("lon")){
+               var lon =  sharedPreferences.getFloat("lon", 0.0f)
+               var lat =  sharedPreferences.getFloat("lat", 0.0f)
+               // viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble())
+            }
+        }else{
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(KEY, true)
+            editor.apply()
+            showLocationDialog()
+        }
+
 
 
     }
@@ -163,4 +178,5 @@ class HomeFragment : Fragment() {
 
         )
     }
+
 }

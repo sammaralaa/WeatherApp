@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.databinding.FragmentMapBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -60,10 +61,11 @@ class MapFragment : Fragment() {
                     val lon = p.longitude
 
                     // Add a marker at the selected location
-                    // addMarker(geoPoint)
+                     addMarker(p)
                     saveData("lon",lon)
                     saveData("lat",lat)
                     Log.i("TAG", "onViewCreated: Selected Location: Lat: $lat, Lon: $lon")
+                    findNavController().navigate(R.id.action_mapFragment_to_homeFragment)
                 }
                 return true // return true if event is handled
             }
