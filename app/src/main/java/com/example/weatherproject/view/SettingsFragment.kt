@@ -55,7 +55,9 @@ class SettingsFragment : Fragment() {
         languageGroup.setOnCheckedChangeListener{group, checkedId ->
             if(arabicButton.id == checkedId){
 
-            }else if(englishButton.id == checkedId)
+            }else if(englishButton.id == checkedId){
+
+            }
         }
     }
 
