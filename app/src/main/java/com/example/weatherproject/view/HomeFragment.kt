@@ -57,6 +57,7 @@ class HomeFragment : Fragment() {
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private val KEY = "selected"
     private var lang : String = ""
+    private var unite : String = ""
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
 
@@ -79,6 +80,11 @@ class HomeFragment : Fragment() {
         }else{
             lang = "en"
             u.setAppLocale(lang,requireContext())
+        }
+        if(viewModel.isSharedPreferencesContains("units",requireActivity())){
+            unite = viewModel.getStringFromSharedPref("units",requireActivity()).toString()
+        }else{
+            unite = "standard"
         }
     }
 

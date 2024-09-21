@@ -115,18 +115,27 @@ class SettingsFragment : Fragment() {
         tempGroup.setOnCheckedChangeListener{group, checkedId ->
             if(kelvinButton.id == checkedId){
                 msButton.isChecked=true
+                viewModel.saveData("units","standard",requireActivity())
             }else if(celsiusButton.id == checkedId){
                 msButton.isChecked=true
+                viewModel.saveData("units","metric",requireActivity())
             }else if(fahrenButton.id == checkedId){
                 mhButton.isChecked=true
+                viewModel.saveData("units","imperial",requireActivity())
             }
         }
 
         windGroup.setOnCheckedChangeListener{group, checkedId ->
             if(msButton.id == checkedId){
                     kelvinButton.isChecked=true
+                if(kelvinButton.isChecked){
+                    viewModel.saveData("units","standard",requireActivity())
+                }else{
+                    viewModel.saveData("units","metric",requireActivity())
+                }
             }else if(mhButton.id == checkedId){
                 fahrenButton.isChecked=true
+                viewModel.saveData("units","imperial",requireActivity())
             }
         }
     }
