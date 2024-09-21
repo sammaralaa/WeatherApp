@@ -9,12 +9,13 @@ import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.WheatherModel
 import com.example.weatherproject.model.Wind
 import retrofit2.Response
+import java.util.Locale
 
 class WeatherRemoteDataSource(var apiObj : ApiService) {
     val API_KEY = "7f6dd0097b5662feed4455238a1321a5"
 
     suspend fun getCurrentWeather(lat: Double, lon: Double): WeatherResponse? {
-        val response = apiObj.getCurrentWeather(lat, lon, API_KEY)
+        val response = apiObj.getCurrentWeather(lat, lon, Locale.getDefault().language ,API_KEY)
         return if (response.isSuccessful) {
             response.body()
         } else {

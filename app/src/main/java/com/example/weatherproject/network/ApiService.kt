@@ -19,11 +19,13 @@ interface ApiService {
     suspend fun getCurrentWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
+        @Query("lang") lang:String,
         @Query("appid") apiKey: String): Response<WeatherResponse>
 
     @GET("main")
     suspend fun getMain(@Query("lat") latitude: Double,
                         @Query("lon") longitude: Double,
+
                         @Query("appid") apiKey: String):Response<MainResponse>
 
     @GET("wind")

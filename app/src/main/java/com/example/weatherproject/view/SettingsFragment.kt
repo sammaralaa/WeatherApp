@@ -77,6 +77,7 @@ class SettingsFragment : Fragment() {
             }else if(englishButton.id == checkedId){
                 u.setAppLocale("en",requireContext())
             }
+            findNavController().navigate(R.id.action_settingsFragment_self)
         }
     }
 
