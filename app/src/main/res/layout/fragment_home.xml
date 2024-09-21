@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_corners"
                     android:orientation="vertical"
-
+                    android:padding="10dp"
                     >
                     <LinearLayout
                         android:padding="5dp"

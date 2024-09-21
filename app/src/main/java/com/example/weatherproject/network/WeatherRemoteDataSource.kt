@@ -1,5 +1,6 @@
 package com.example.weatherproject.network
 
+import android.content.Context
 import android.util.Log
 import com.example.weatherproject.model.Clouds
 import com.example.weatherproject.model.CurrentWeatherResponse
@@ -13,9 +14,11 @@ import java.util.Locale
 
 class WeatherRemoteDataSource(var apiObj : ApiService) {
     val API_KEY = "7f6dd0097b5662feed4455238a1321a5"
+    //var loc : String = ""
 
-    suspend fun getCurrentWeather(lat: Double, lon: Double): WeatherResponse? {
-        val response = apiObj.getCurrentWeather(lat, lon, Locale.getDefault().language ,API_KEY)
+
+    suspend fun getCurrentWeather(lat: Double, lon: Double,lang : String): WeatherResponse? {
+        val response = apiObj.getCurrentWeather(lat, lon, lang ,API_KEY)
         return if (response.isSuccessful) {
             response.body()
         } else {

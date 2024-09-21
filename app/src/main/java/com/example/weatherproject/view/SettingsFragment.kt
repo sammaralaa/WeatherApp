@@ -13,10 +13,17 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentSettingsBinding
+import com.example.weatherproject.model.WeatherLocalDataSource
+import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.network.RetrofitHelper
+import com.example.weatherproject.network.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
+import com.example.weatherproject.view_model.home.HomeFragmentViewModel
+import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import java.util.Locale
 
 class SettingsFragment : Fragment() {
@@ -24,11 +31,21 @@ class SettingsFragment : Fragment() {
 
     lateinit var locatioGroup : RadioGroup
     lateinit var languageGroup : RadioGroup
+    lateinit var tempGroup : RadioGroup
+    lateinit var windGroup : RadioGroup
 
     lateinit var gpsButton : RadioButton
     lateinit var mapButton : RadioButton
     lateinit var arabicButton : RadioButton
     lateinit var englishButton : RadioButton
+    lateinit var kelvinButton : RadioButton
+    lateinit var celsiusButton : RadioButton
+    lateinit var fahrenButton : RadioButton
+    lateinit var msButton : RadioButton
+    lateinit var mhButton : RadioButton
+
+    private lateinit var viewModel: HomeFragmentViewModel
+    private lateinit var allFactory: HomeFragmentViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,22 +63,35 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         locatioGroup = binding.locationRadioGroup
         languageGroup = binding.languageRadioGroup
+        tempGroup = binding.tempRadioGroup
+        windGroup = binding.windRadioGroup
 
         gpsButton = binding.gpsRadioButton
         mapButton = binding.mapRadioButton
         arabicButton = binding.arabicRadioButton
         englishButton = binding.englishRadioButton
+        kelvinButton = binding.kelvinRadioButton
+        fahrenButton = binding.fahrenRadioButton
+        celsiusButton = binding.celsiusRadioButton
+        msButton = binding.msRadioButton
+        mhButton = binding.mhRadioButton
+        allFactory = HomeFragmentViewModelFactory(
+            WeatherRepository.getInstance(
+                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()
+            ))
+        viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
 
         locatioGroup.setOnCheckedChangeListener{group, checkedId ->
             if(mapButton.id == checkedId){
+                viewModel.saveData("location","map",requireActivity())
                 findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
-            }
-            else if(gpsButton.id == checkedId){
 
             }
+            else if(gpsButton.id == checkedId){
+                viewModel.saveData("location","gps",requireActivity())
+            }
         }
-//        val currentAppLocales: LocaleList = requireContext().getSystemService(LocaleManager::class.java).getApplicationLocales("com.example.weatherproject")
-//        Log.i("TAG", "onViewCreated: $currentAppLocales")
+
         val currentLanguage = Locale.getDefault().language
         val currentCountry = Locale.getDefault().country
         Log.i("TAG", "Current language: $currentLanguage, Current country: $currentCountry")
@@ -74,10 +104,30 @@ class SettingsFragment : Fragment() {
             var u = utilitis()
             if(arabicButton.id == checkedId){
                 u.setAppLocale("ar",requireContext())
+                viewModel.saveData("lang","ar",requireActivity())
             }else if(englishButton.id == checkedId){
                 u.setAppLocale("en",requireContext())
+                viewModel.saveData("lang","en",requireActivity())
             }
             findNavController().navigate(R.id.action_settingsFragment_self)
+        }
+
+        tempGroup.setOnCheckedChangeListener{group, checkedId ->
+            if(kelvinButton.id == checkedId){
+                msButton.isChecked=true
+            }else if(celsiusButton.id == checkedId){
+                msButton.isChecked=true
+            }else if(fahrenButton.id == checkedId){
+                mhButton.isChecked=true
+            }
+        }
+
+        windGroup.setOnCheckedChangeListener{group, checkedId ->
+            if(msButton.id == checkedId){
+                    kelvinButton.isChecked=true
+            }else if(mhButton.id == checkedId){
+                fahrenButton.isChecked=true
+            }
         }
     }
 

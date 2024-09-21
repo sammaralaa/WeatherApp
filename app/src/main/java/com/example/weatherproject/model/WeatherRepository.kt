@@ -18,8 +18,8 @@ class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource,pr
 
     }
 
-    suspend fun getCurrentWeather(lat: Double, lon: Double) : WeatherResponse?{
-        return remoteDataSource.getCurrentWeather(lat,lon)
+    suspend fun getCurrentWeather(lat: Double, lon: Double,lang : String) : WeatherResponse?{
+        return remoteDataSource.getCurrentWeather(lat,lon,lang)
     }
     suspend fun getMain(lat: Double, lon: Double) : Main?{
         return remoteDataSource.getMain(lat,lon)

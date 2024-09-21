@@ -22,12 +22,11 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     val weather: LiveData<WeatherResponse?> = _weather
      var w :WeatherResponse? = null
     var wind : Wind? = null
-    init {
-       // getCurrentWeather(10.99,44.34)
-    }
-    fun getCurrentWeather(lat: Double, lon: Double) {
+
+    fun getCurrentWeather(lat: Double, lon: Double,lang : String) {
+
        viewModelScope.launch(Dispatchers.IO){
-            w = repo.getCurrentWeather(lat,lon)
+            w = repo.getCurrentWeather(lat,lon,lang)
            withContext(Dispatchers.Main){
                _weather.postValue(w)
            }
@@ -58,5 +57,17 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
         editor.putFloat(key, value.toFloat())
         editor.apply() // or editor.commit() for synchronous saving
         Log.i("TAG", "saveData: $key == $value ")
+    }
+    fun saveData(key: String, value: String,activity: Activity) {
+        val sharedPreferences =activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(key, value)
+        editor.apply() // or editor.commit() for synchronous saving
+        Log.i("TAG", "saveData: $key == $value ")
+    }
+    fun getStringFromSharedPref(key : String ,activity: Activity) : String?{
+        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString(key,"")
+
     }
 }

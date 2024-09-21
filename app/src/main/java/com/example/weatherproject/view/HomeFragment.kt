@@ -34,6 +34,7 @@ import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.WeatherRemoteDataSource
+import com.example.weatherproject.utilitis
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -55,7 +56,8 @@ class HomeFragment : Fragment() {
     lateinit var desc : TextView
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private val KEY = "selected"
-
+    private var lang : String = ""
+    private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
 
     lateinit var temp : TextView
@@ -67,12 +69,23 @@ class HomeFragment : Fragment() {
     lateinit var city : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
+            WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()))
+        viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
+        // viewModel.getCurrentWeather(10.99, 44.34)
+        if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
+            lang = viewModel.getStringFromSharedPref("lang",requireActivity()).toString()
+            u.setAppLocale(lang,requireContext())
+        }else{
+            lang = "en"
+            u.setAppLocale(lang,requireContext())
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -98,10 +111,6 @@ class HomeFragment : Fragment() {
         toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(navIcon)
 
-        allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
-                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()))
-        viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
-       // viewModel.getCurrentWeather(10.99, 44.34)
 
 
     }
@@ -115,7 +124,7 @@ class HomeFragment : Fragment() {
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
                var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
                var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
-                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble())
+                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang)
                 viewModel.weather.observe(viewLifecycleOwner) { w ->
                     updateUI(w)
                 }
@@ -231,7 +240,7 @@ class HomeFragment : Fragment() {
 
                         // Update weather based on the retrieved location
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
-                        viewModel.getCurrentWeather(lattitudeValue, longituteValue)
+                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang)
 
                         // Observe the weather data and update the UI
                         viewModel.weather.observe(viewLifecycleOwner) { weatherResponse ->
