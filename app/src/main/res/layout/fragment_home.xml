@@ -23,8 +23,8 @@
 
                 <!-- Weather icon and temperature -->
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="206dp"
+                    android:layout_width="219dp"
+                    android:layout_height="138dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
                     android:src="@drawable/weather" />
@@ -38,7 +38,25 @@
                     android:textSize="56sp"
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="16dp"/>
-
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    >
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/location"
+                        />
+                    <TextView
+                        android:id="@+id/cityNametxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:textColor="#FFFFFF"
+                        />
+                </LinearLayout>
                 <!-- Precipitation and Temperature Range -->
                 <TextView
                     android:id="@+id/precipitationText"

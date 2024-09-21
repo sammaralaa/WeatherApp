@@ -23,12 +23,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.example.weatherproject.view.view_model.home.HomeFragmentViewModel
-import com.example.weatherproject.view.view_model.home.HomeFragmentViewModelFactory
+import com.example.weatherproject.view_model.home.HomeFragmentViewModel
+import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
-import com.example.weatherproject.view.view_model.home.REQUEST_LOCATION_CODE
+import com.example.weatherproject.databinding.FragmentHomeBinding
+import com.example.weatherproject.databinding.FragmentMapBinding
+import com.example.weatherproject.view_model.home.REQUEST_LOCATION_CODE
 import com.example.weatherproject.model.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.WeatherRemoteDataSource
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -37,6 +40,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HomeFragment : Fragment() {
     var lattitudeValue : Double = 0.0
@@ -48,6 +55,16 @@ class HomeFragment : Fragment() {
     lateinit var desc : TextView
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private val KEY = "selected"
+
+    private lateinit var binding: FragmentHomeBinding
+
+    lateinit var temp : TextView
+    lateinit var dt : TextView
+    lateinit var humidity : TextView
+    lateinit var wind : TextView
+    lateinit var cloud : TextView
+    lateinit var pressure : TextView
+    lateinit var city : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -55,17 +72,22 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        desc = view.findViewById(R.id.precipitationText)
+        desc = binding.precipitationText
+        temp = binding.temperatureText
+        dt = binding.maxMinTemperature
+        humidity = binding.humidityValuetxt
+        wind = binding.windValuetxt
+        cloud = binding.cloudValuetxt
+        pressure = binding.pressureValuetxt
+        city = binding.cityNametxt
         val toolbar = (activity as AppCompatActivity).supportActionBar
-        val navIcon = ContextCompat.getDrawable(
-            requireContext(),
-            R.drawable.baseline_menu_24
-        ) // Your drawer icon drawable
+        val navIcon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_menu_24)
         navIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.white)) // Change color
 
         // Set the custom icon to toolbar
@@ -76,39 +98,34 @@ class HomeFragment : Fragment() {
         toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(navIcon)
 
-        allFactory = HomeFragmentViewModelFactory(
-            WeatherRepository.getInstance(
-                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()
-            )
-        )
+        allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
+                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
        // viewModel.getCurrentWeather(10.99, 44.34)
 
-        viewModel.weather.observe(viewLifecycleOwner) { w ->
-            Log.i("TAG", "onHomeFragment: ${w?.wind?.deg}")
-        }
+
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onStart() {
         super.onStart()
-        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        if(sharedPreferences.contains(KEY)){
-            if(sharedPreferences.contains("lon")){
-               var lon =  sharedPreferences.getFloat("lon", 0.0f)
-               var lat =  sharedPreferences.getFloat("lat", 0.0f)
-               // viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble())
+        //val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
+               var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
+               var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
+                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble())
+                viewModel.weather.observe(viewLifecycleOwner) { w ->
+                    updateUI(w)
+                }
             }
         }else{
-            val editor = sharedPreferences.edit()
-            editor.putBoolean(KEY, true)
-            editor.apply()
+            viewModel.addSelected(requireActivity())
             showLocationDialog()
         }
-
-
-
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showLocationDialog() {
         val options = arrayOf("Use GPS", "Enter Location Manually")
 
@@ -119,15 +136,26 @@ class HomeFragment : Fragment() {
                     0 -> {
                         // Use GPS
                         if(checkPermissions()){
+                            Log.i("TAG", "showLocationDialog: checkPermissions")
                             if(isLocationEnabled()){
+                                Log.i("TAG", "showLocationDialog: isLocationEnabled")
                                 getFreshLocation()
+                                Log.i("TAG", "isLocationEnabled: ")
+//                                viewModel.getCurrentWeather(lattitudeValue,longituteValue)
+//                                viewModel.weather.observe(viewLifecycleOwner) { w ->
+//                                    updateUI(w)
+//                                }
                             }else{
+                                Log.i("TAG", "showLocationDialog: isLocationEnabled else")
                                 enableLocationServices()
+                                getFreshLocation()
                             }
                         }else{
+                            Log.i("TAG", "showLocationDialog: requestPermissions else")
                             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                                REQUEST_LOCATION_CODE
+                                LOCATION_PERMISSION_REQUEST_CODE
                             )
+
                         }
                     }
                     1 -> {
@@ -138,6 +166,24 @@ class HomeFragment : Fragment() {
             }
             .create()
             .show()
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                if (isLocationEnabled()) {
+                    getFreshLocation()
+                } else {
+                    enableLocationServices()
+                    getFreshLocation()
+                }
+            } else {
+                // Permission denied, show a message to the user
+                Toast.makeText(this.requireContext(), "Location permission denied", Toast.LENGTH_LONG).show()
+            }
+        }
     }
     private fun checkPermissions(): Boolean {
         Log.i("TAG", "checkPermissions: ")
@@ -158,26 +204,67 @@ class HomeFragment : Fragment() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
     @SuppressLint("MissingPermission")
-    private fun getFreshLocation(){
-        Log.i("TAG", "getFreshLocation: ")
+    private fun getFreshLocation() {
+        Log.i("TAG", "getFreshLocation: requesting location update")
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        fusedLocationProviderClient.requestLocationUpdates(
-            LocationRequest.Builder(0).apply { setPriority(Priority.PRIORITY_HIGH_ACCURACY) }.build(),
+
+        val locationRequest = LocationRequest.Builder(10000) // 10 seconds interval
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .build()
+
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,
             object : LocationCallback() {
-                @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-                override fun onLocationResult(p0: LocationResult) {
-                    Log.i("TAG", "onLocationResult: ")
-                    super.onLocationResult(p0)
-                    //Log.i("TAG", "onLocationResult: ${p0.locations.toString()}")
-                    longituteValue = p0.locations.get(0).longitude
-                    lattitudeValue = p0.locations.get(0).latitude
-                    geoCoder = Geocoder(this@HomeFragment.requireContext())
-                    Log.i("TAG", "onLocationResult: long = ${longituteValue } --- lat = ${lattitudeValue}")
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+
+                    if (locationResult != null && locationResult.locations.isNotEmpty()) {
+                        // Get the last location from the result
+                        val location = locationResult.lastLocation
+                        lattitudeValue = location?.latitude?:0.0
+                        longituteValue = location?.longitude?:0.0
+
+                        // Save the data in shared preferences
+                        viewModel.saveData("lon", longituteValue, requireActivity())
+                        viewModel.saveData("lat", lattitudeValue, requireActivity())
+
+                        // Update weather based on the retrieved location
+                        Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
+                        viewModel.getCurrentWeather(lattitudeValue, longituteValue)
+
+                        // Observe the weather data and update the UI
+                        viewModel.weather.observe(viewLifecycleOwner) { weatherResponse ->
+                            updateUI(weatherResponse)
+                        }
+
+                    } else {
+                        Log.e("TAG", "No location detected")
+                        Toast.makeText(requireContext(), "Unable to get location", Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-            }, Looper.myLooper()
-
+            },
+            Looper.getMainLooper()
         )
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDateTime(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return current.format(formatter)
+        Log.i("TAG", "getCurrentDateTime: ")
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateUI(response : WeatherResponse?){
+        desc.text = response?.weather?.get(0)?.description
+        temp.text = response?.main?.temp?.toString()
+        dt.text = getCurrentDateTime()
+        humidity.text = response?.main?.humidity?.toString()
+        wind.text = response?.wind?.speed?.toString()
+        cloud.text = response?.clouds?.all.toString()
+        pressure.text = response?.main?.pressure.toString()
+        city.text = response?.name
+    }
 }
