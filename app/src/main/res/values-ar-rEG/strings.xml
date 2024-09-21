@@ -1,2 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">الطقس</string>
+    <string name="home">الرئيسيه</string>
+    <string name="favorites">المفضله</string>
+    <string name="settings">الاعدادات</string>
+    <string name="alerts">الاشعارات</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">الرياح</string>
+    <string name="cloud">الغيوم</string>
+    <string name="pressure">الضغط</string>
+    <string name="location">الموقع</string>
+    <string name="gps">GPS</string>
+    <string name="map">الخريطه</string>
+    <string name="language">اللغه</string>
+    <string name="arabic">العربيه</string>
+    <string name="english">الانجليزيه</string>
+</resources>
