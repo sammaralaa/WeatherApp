@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners"
-            android:layout_margin="20dp"
+            android:layout_margin="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners"
-            android:layout_margin="20dp"
+            android:layout_margin="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -94,6 +94,98 @@
                     android:textSize="23dp"
                     android:textColor="@color/white"
                     />
+            </RadioGroup>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners"
+            android:layout_margin="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/temp"
+                android:textColor="@color/basic"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+            <RadioGroup
+                android:id="@+id/temp_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                >
+
+                <RadioButton
+                    android:id="@+id/kelvin_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kelvin"
+                    android:textColor="@color/white"
+                    android:textSize="23dp"
+                    android:checked="true"
+                    />
+
+                <RadioButton
+                    android:id="@+id/celsius_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/celsius"
+                    android:textColor="@color/white"
+                    android:textSize="23dp" />
+
+                <RadioButton
+                    android:id="@+id/fahren_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fahren"
+                    android:textColor="@color/white"
+                    android:textSize="23dp" />
+            </RadioGroup>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corners"
+            android:layout_margin="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/wind_speed"
+                android:textColor="@color/basic"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+            <RadioGroup
+                android:id="@+id/wind_radio_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                >
+
+                <RadioButton
+                    android:id="@+id/ms_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ms"
+                    android:textColor="@color/white"
+                    android:textSize="23dp"
+                    android:checked="true"
+                    />
+
+                <RadioButton
+                    android:id="@+id/mh_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mh"
+                    android:textColor="@color/white"
+                    android:textSize="23dp" />
             </RadioGroup>
 
         </LinearLayout>

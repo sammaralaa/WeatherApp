@@ -18,4 +18,11 @@
     <string name="language">Language</string>
     <string name="arabic">Arabic</string>
     <string name="english">English</string>
+    <string name="temp">Temperature</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahren">Fahrenheit</string>
+    <string name="ms">meter/sec</string>
+    <string name="mh">meter/hour</string>
 </resources>
