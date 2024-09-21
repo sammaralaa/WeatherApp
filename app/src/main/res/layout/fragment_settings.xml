@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gps"
-                    android:textSize="20dp"
+                    android:textSize="23dp"
                     android:textColor="@color/white"
                     />
 
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/map"
-                    android:textSize="20dp"
+                    android:textSize="23dp"
                     android:textColor="@color/white"
                     />
             </RadioGroup>
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/arabic"
-                    android:textSize="20dp"
+                    android:textSize="23dp"
                     android:textColor="@color/white"
                     />
 
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/english"
-                    android:textSize="20dp"
+                    android:textSize="23dp"
                     android:textColor="@color/white"
                     />
             </RadioGroup>
