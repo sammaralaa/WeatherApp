@@ -12,13 +12,13 @@ import com.example.weatherproject.model.Wind
 import retrofit2.Response
 import java.util.Locale
 
-class WeatherRemoteDataSource(var apiObj : ApiService) {
+class WeatherRemoteDataSource(var apiObj : ApiService) : IWeatherRemoteDataSource {
     val API_KEY = "7f6dd0097b5662feed4455238a1321a5"
     //var loc : String = ""
 
 
-    suspend fun getCurrentWeather(lat: Double, lon: Double,lang : String): WeatherResponse? {
-        val response = apiObj.getCurrentWeather(lat, lon, lang ,API_KEY)
+    override suspend fun getCurrentWeather(lat: Double, lon: Double, lang : String, unit :String): WeatherResponse? {
+        val response = apiObj.getCurrentWeather(lat, lon, lang ,unit,API_KEY)
         return if (response.isSuccessful) {
             response.body()
         } else {
@@ -27,7 +27,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         }
     }
 
-    suspend fun getMain(lat: Double, lon: Double) : Main?{
+    override suspend fun getMain(lat: Double, lon: Double) : Main?{
         val response = apiObj.getMain(lat,lon,API_KEY)
         return if (response.isSuccessful) {
             response.body()?.main
@@ -37,7 +37,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         }
     }
 
-    suspend fun getWind(lat: Double, lon: Double) : Wind?{
+    override suspend fun getWind(lat: Double, lon: Double) : Wind?{
         val response = apiObj.getWind(lat,lon,API_KEY)
         return if (response.isSuccessful) {
             response.body()?.wind
@@ -47,7 +47,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         }
     }
 
-    suspend fun getClouds(lat: Double, lon: Double) : Clouds?{
+    override suspend fun getClouds(lat: Double, lon: Double) : Clouds?{
         val response = apiObj.getClouds(lat,lon,API_KEY)
         return if (response.isSuccessful) {
             response.body()?.clouds
@@ -57,7 +57,7 @@ class WeatherRemoteDataSource(var apiObj : ApiService) {
         }
     }
 
-    suspend fun getCityName(lat: Double, lon: Double) : String?{
+    override suspend fun getCityName(lat: Double, lon: Double) : String?{
         val response = apiObj.getCityName(lat,lon,API_KEY)
         return if (response.isSuccessful) {
             response.body()

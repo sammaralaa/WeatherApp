@@ -1,6 +1,7 @@
 package com.example.weatherproject.view
 
 import android.app.LocaleManager
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentSettingsBinding
 import com.example.weatherproject.model.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
@@ -77,18 +79,19 @@ class SettingsFragment : Fragment() {
         mhButton = binding.mhRadioButton
         allFactory = HomeFragmentViewModelFactory(
             WeatherRepository.getInstance(
-                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()
+                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(),
+                SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
 
         locatioGroup.setOnCheckedChangeListener{group, checkedId ->
             if(mapButton.id == checkedId){
-                viewModel.saveData("location","map",requireActivity())
+                viewModel.saveData("location","map")
                 findNavController().navigate(R.id.action_settingsFragment_to_mapFragment)
 
             }
             else if(gpsButton.id == checkedId){
-                viewModel.saveData("location","gps",requireActivity())
+                viewModel.saveData("location","gps")
             }
         }
 
@@ -104,10 +107,10 @@ class SettingsFragment : Fragment() {
             var u = utilitis()
             if(arabicButton.id == checkedId){
                 u.setAppLocale("ar",requireContext())
-                viewModel.saveData("lang","ar",requireActivity())
+                viewModel.saveData("lang","ar")
             }else if(englishButton.id == checkedId){
                 u.setAppLocale("en",requireContext())
-                viewModel.saveData("lang","en",requireActivity())
+                viewModel.saveData("lang","en")
             }
             findNavController().navigate(R.id.action_settingsFragment_self)
         }
@@ -115,13 +118,13 @@ class SettingsFragment : Fragment() {
         tempGroup.setOnCheckedChangeListener{group, checkedId ->
             if(kelvinButton.id == checkedId){
                 msButton.isChecked=true
-                viewModel.saveData("units","standard",requireActivity())
+                viewModel.saveData("units","standard")
             }else if(celsiusButton.id == checkedId){
                 msButton.isChecked=true
-                viewModel.saveData("units","metric",requireActivity())
+                viewModel.saveData("units","metric")
             }else if(fahrenButton.id == checkedId){
                 mhButton.isChecked=true
-                viewModel.saveData("units","imperial",requireActivity())
+                viewModel.saveData("units","imperial")
             }
         }
 
@@ -129,15 +132,17 @@ class SettingsFragment : Fragment() {
             if(msButton.id == checkedId){
                     kelvinButton.isChecked=true
                 if(kelvinButton.isChecked){
-                    viewModel.saveData("units","standard",requireActivity())
+                    viewModel.saveData("units","standard")
                 }else{
-                    viewModel.saveData("units","metric",requireActivity())
+                    viewModel.saveData("units","metric")
                 }
             }else if(mhButton.id == checkedId){
                 fahrenButton.isChecked=true
-                viewModel.saveData("units","imperial",requireActivity())
+                viewModel.saveData("units","imperial")
             }
         }
     }
+fun showConfermationDialog(msg : String){
 
+}
 }

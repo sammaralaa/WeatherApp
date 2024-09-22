@@ -5,7 +5,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +19,9 @@ import com.example.weatherproject.model.Wind
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 const val  REQUEST_LOCATION_CODE = 2001
 class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
     private val _weather = MutableLiveData<WeatherResponse?>()
@@ -23,10 +29,10 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
      var w :WeatherResponse? = null
     var wind : Wind? = null
 
-    fun getCurrentWeather(lat: Double, lon: Double,lang : String) {
+    fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
 
        viewModelScope.launch(Dispatchers.IO){
-            w = repo.getCurrentWeather(lat,lon,lang)
+            w = repo.getCurrentWeather(lat,lon,lang,unit)
            withContext(Dispatchers.Main){
                _weather.postValue(w)
            }
@@ -58,16 +64,17 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
         editor.apply() // or editor.commit() for synchronous saving
         Log.i("TAG", "saveData: $key == $value ")
     }
-    fun saveData(key: String, value: String,activity: Activity) {
-        val sharedPreferences =activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        editor.apply() // or editor.commit() for synchronous saving
-        Log.i("TAG", "saveData: $key == $value ")
+    fun saveData(key: String, value: String) {
+        repo.setStringFromSharedPref(key,value)
     }
-    fun getStringFromSharedPref(key : String ,activity: Activity) : String?{
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString(key,"")
-
+    fun getStringFromSharedPref(key : String) : String?{
+        return repo.getStringFromSharedPref(key)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDateTime(): String {
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        return current.format(formatter)
+        Log.i("TAG", "getCurrentDateTime: ")
     }
 }

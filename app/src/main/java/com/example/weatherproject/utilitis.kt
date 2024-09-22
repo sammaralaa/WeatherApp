@@ -16,10 +16,10 @@ class utilitis {
 
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
 
-        // For Android 8.0 (API level 26) and higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.createConfigurationContext(config)
         }
     }
 
 }
+

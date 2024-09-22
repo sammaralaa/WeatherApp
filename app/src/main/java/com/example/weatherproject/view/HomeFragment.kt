@@ -32,6 +32,7 @@ import com.example.weatherproject.view_model.home.REQUEST_LOCATION_CODE
 import com.example.weatherproject.model.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
+import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
@@ -41,8 +42,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -61,33 +60,36 @@ class HomeFragment : Fragment() {
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
 
-    lateinit var temp : TextView
-    lateinit var dt : TextView
-    lateinit var humidity : TextView
-    lateinit var wind : TextView
-    lateinit var cloud : TextView
-    lateinit var pressure : TextView
-    lateinit var city : TextView
+    //lateinit var temp : TextView
+//    lateinit var dt : TextView
+//    lateinit var humidity : TextView
+//    lateinit var wind : TextView
+//    lateinit var cloud : TextView
+//    lateinit var pressure : TextView
+//    lateinit var city : TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
-            WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource()))
+            WeatherRemoteDataSource(RetrofitHelper.service),
+            WeatherLocalDataSource(),
+            SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
+        ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
         // viewModel.getCurrentWeather(10.99, 44.34)
         if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
-            lang = viewModel.getStringFromSharedPref("lang",requireActivity()).toString()
+            lang = viewModel.getStringFromSharedPref("lang").toString()
             u.setAppLocale(lang,requireContext())
         }else{
             lang = "en"
             u.setAppLocale(lang,requireContext())
         }
         if(viewModel.isSharedPreferencesContains("units",requireActivity())){
-            unite = viewModel.getStringFromSharedPref("units",requireActivity()).toString()
+            unite = viewModel.getStringFromSharedPref("units").toString()
         }else{
             unite = "standard"
         }
-    }
 
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -97,14 +99,14 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        desc = binding.precipitationText
-        temp = binding.temperatureText
-        dt = binding.maxMinTemperature
-        humidity = binding.humidityValuetxt
-        wind = binding.windValuetxt
-        cloud = binding.cloudValuetxt
-        pressure = binding.pressureValuetxt
-        city = binding.cityNametxt
+//        desc = binding.precipitationText
+        //temp = binding.temperatureText
+//        dt = binding.maxMinTemperature
+//        humidity = binding.humidityValuetxt
+//        wind = binding.windValuetxt
+//        cloud = binding.cloudValuetxt
+//        pressure = binding.pressureValuetxt
+//        city = binding.cityNametxt
         val toolbar = (activity as AppCompatActivity).supportActionBar
         val navIcon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_menu_24)
         navIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.white)) // Change color
@@ -117,20 +119,17 @@ class HomeFragment : Fragment() {
         toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(navIcon)
 
-
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onStart() {
         super.onStart()
-        //val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
                var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
                var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
-                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang)
+                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang,"metric")
                 viewModel.weather.observe(viewLifecycleOwner) { w ->
                     updateUI(w)
                 }
@@ -246,7 +245,7 @@ class HomeFragment : Fragment() {
 
                         // Update weather based on the retrieved location
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
-                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang)
+                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang,"metric")
 
                         // Observe the weather data and update the UI
                         viewModel.weather.observe(viewLifecycleOwner) { weatherResponse ->
@@ -264,22 +263,16 @@ class HomeFragment : Fragment() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getCurrentDateTime(): String {
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return current.format(formatter)
-        Log.i("TAG", "getCurrentDateTime: ")
-    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateUI(response : WeatherResponse?){
-        desc.text = response?.weather?.get(0)?.description
-        temp.text = response?.main?.temp?.toString()
-        dt.text = getCurrentDateTime()
-        humidity.text = response?.main?.humidity?.toString()
-        wind.text = response?.wind?.speed?.toString()
-        cloud.text = response?.clouds?.all.toString()
-        pressure.text = response?.main?.pressure.toString()
-        city.text = response?.name
+        binding.precipitationText.text = response?.weather?.get(0)?.description
+        binding.temperatureText.text = response?.main?.temp?.toString()
+        binding.maxMinTemperature.text = viewModel.getCurrentDateTime()
+        binding.humidityValuetxt.text = response?.main?.humidity?.toString()
+        binding.windValuetxt.text = response?.wind?.speed?.toString()
+        binding.cloudValuetxt.text = response?.clouds?.all.toString()
+        binding.pressureValuetxt.text = response?.main?.pressure.toString()
+        binding.cityNametxt.text = response?.name
     }
 }
