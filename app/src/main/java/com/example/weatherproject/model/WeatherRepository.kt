@@ -1,15 +1,15 @@
 package com.example.weatherproject.model
 
-import android.util.Log
+import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
-import com.example.weatherproject.network.WeatherRemoteDataSource
+import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 
-class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource,private var localDataAource: WeatherLocalDataSource,private  var sharedDataSource: SharedDataSource) {
+class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, private var localDataAource: WeatherLocalDataSource, private  var sharedDataSource: SharedDataSource) {
 
     companion object{
         var instance : WeatherRepository ? = null
 
-        fun getInstance(remote : WeatherRemoteDataSource, local : WeatherLocalDataSource , sharedDataSource: SharedDataSource) : WeatherRepository{
+        fun getInstance(remote : WeatherRemoteDataSource, local : WeatherLocalDataSource, sharedDataSource: SharedDataSource) : WeatherRepository{
             return instance?: synchronized(this){
                 val temp = WeatherRepository(remote,local,sharedDataSource)
                 instance=temp

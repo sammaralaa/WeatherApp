@@ -27,14 +27,12 @@ import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentHomeBinding
-import com.example.weatherproject.databinding.FragmentMapBinding
-import com.example.weatherproject.view_model.home.REQUEST_LOCATION_CODE
-import com.example.weatherproject.model.WeatherLocalDataSource
+import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
-import com.example.weatherproject.network.WeatherRemoteDataSource
+import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -42,8 +40,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class HomeFragment : Fragment() {
     var lattitudeValue : Double = 0.0
@@ -76,19 +72,8 @@ class HomeFragment : Fragment() {
         ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
         // viewModel.getCurrentWeather(10.99, 44.34)
-        if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
-            lang = viewModel.getStringFromSharedPref("lang").toString()
-            u.setAppLocale(lang,requireContext())
-        }else{
-            lang = "en"
-            u.setAppLocale(lang,requireContext())
-        }
-        if(viewModel.isSharedPreferencesContains("units",requireActivity())){
-            unite = viewModel.getStringFromSharedPref("units").toString()
-        }else{
-            unite = "standard"
-        }
 
+        updateConfig()
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -129,7 +114,8 @@ class HomeFragment : Fragment() {
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
                var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
                var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
-                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang,"metric")
+                updateConfig()
+                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang,unite)
                 viewModel.weather.observe(viewLifecycleOwner) { w ->
                     updateUI(w)
                 }
@@ -244,8 +230,9 @@ class HomeFragment : Fragment() {
                         viewModel.saveData("lat", lattitudeValue, requireActivity())
 
                         // Update weather based on the retrieved location
+                        updateConfig()
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
-                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang,"metric")
+                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang,unite)
 
                         // Observe the weather data and update the UI
                         viewModel.weather.observe(viewLifecycleOwner) { weatherResponse ->
@@ -274,5 +261,19 @@ class HomeFragment : Fragment() {
         binding.cloudValuetxt.text = response?.clouds?.all.toString()
         binding.pressureValuetxt.text = response?.main?.pressure.toString()
         binding.cityNametxt.text = response?.name
+    }
+    fun updateConfig(){
+        if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
+            lang = viewModel.getStringFromSharedPref("lang").toString()
+            u.setAppLocale(lang,requireContext())
+        }else{
+            lang = "en"
+            u.setAppLocale(lang,requireContext())
+        }
+        if(viewModel.isSharedPreferencesContains("units",requireActivity())){
+            unite = viewModel.getStringFromSharedPref("units").toString()
+        }else{
+            unite = "standard"
+        }
     }
 }

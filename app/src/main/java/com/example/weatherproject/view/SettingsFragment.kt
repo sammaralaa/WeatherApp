@@ -1,11 +1,8 @@
 package com.example.weatherproject.view
 
-import android.app.LocaleManager
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,11 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentSettingsBinding
-import com.example.weatherproject.model.WeatherLocalDataSource
+import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
-import com.example.weatherproject.network.WeatherRemoteDataSource
+import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
 import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
@@ -92,6 +89,7 @@ class SettingsFragment : Fragment() {
             }
             else if(gpsButton.id == checkedId){
                 viewModel.saveData("location","gps")
+
             }
         }
 

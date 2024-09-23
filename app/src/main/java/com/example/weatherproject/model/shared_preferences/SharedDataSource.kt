@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 
-class SharedDataSource(var sharedPreference: SharedPreferences) {
+class SharedDataSource(override var sharedPreference: SharedPreferences) : ISharedDataSource {
 
-    fun getStringFromSharedPref(key : String) : String?{
+    override fun getStringFromSharedPref(key : String) : String?{
         return sharedPreference.getString(key,"")
     }
-    fun setStringFromSharedPref(key: String, value: String) {
+    override fun setStringFromSharedPref(key: String, value: String) {
         val editor = sharedPreference.edit()
         editor.putString(key, value)
         editor.apply()
