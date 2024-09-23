@@ -34,6 +34,9 @@
         <meta-data
             android:name="osmdroid.tile.cache"
             android:value="osmdroid" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA_HbhVc7Qs5p9HSlHVR5d-B4M4MbDdmGU" />
     </application>
 
 </manifest>
