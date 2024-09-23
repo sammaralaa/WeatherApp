@@ -26,4 +26,10 @@
     <string name="ms">meter/sec</string>
     <string name="mh">meter/hour</string>
     <string name="Searchlocation">Search location</string>
+    <string name="google_maps_key">AIzaSyA_HbhVc7Qs5p9HSlHVR5d-B4M4MbDdmGU</string>
+    <string name="search">Search for a location</string>
+    <string name="confirm">Confirmation</string>
+    <string name="conf">Are you sure you want to change your location?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

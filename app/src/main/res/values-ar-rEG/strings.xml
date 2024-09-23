@@ -26,4 +26,7 @@
     <string name="fahren">Fahrenheit</string>
     <string name="ms">meter/sec</string>
     <string name="mh">meter/hour</string>
+    <string name="Searchlocation">Search location</string>
+    <string name="conf">Are you sure you want to change your location?</string>
+    <string name="no">No</string>
 </resources>
