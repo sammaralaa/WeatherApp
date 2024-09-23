@@ -107,7 +107,7 @@
                             android:textSize="25dp"
                             android:text="@string/humidity"
                             android:layout_weight="1"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             />
                         <TextView
                             android:id="@+id/humidityValuetxt"
@@ -115,7 +115,8 @@
                             android:layout_height="wrap_content"
                             android:textSize="25dp"
                             android:text="value"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
+                            android:layout_marginRight="15dp"
                             />
                     </LinearLayout>
                     <com.google.android.material.divider.MaterialDivider
@@ -141,15 +142,16 @@
                             android:layout_weight="1"
                             android:text="@string/wind"
                             android:textSize="25dp"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             />
                         <TextView
                             android:id="@+id/windValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="25dp"
-                            android:text="value"
-                            android:textColor="@color/black"
+
+                            android:layout_marginRight="15dp"
+                            android:textColor="@color/white"
                             />
                     </LinearLayout>
                     <com.google.android.material.divider.MaterialDivider
@@ -176,15 +178,15 @@
                             android:layout_weight="1"
                             android:text="@string/cloud"
                             android:textSize="25dp"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             />
                         <TextView
                             android:id="@+id/cloudValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="25dp"
-                            android:text="value"
-                            android:textColor="@color/black"
+                            android:layout_marginRight="15dp"
+                            android:textColor="@color/white"
                             />
                     </LinearLayout>
 
@@ -211,15 +213,15 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/pressure"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:textSize="25dp" />
                         <TextView
                             android:id="@+id/pressureValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="25dp"
-                            android:text="value"
-                            android:textColor="@color/black"
+                            android:layout_marginRight="15dp"
+                            android:textColor="@color/white"
                             />
                     </LinearLayout>
                 </LinearLayout>
