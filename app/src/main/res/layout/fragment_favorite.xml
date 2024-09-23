@@ -6,12 +6,30 @@
     android:paddingTop="?attr/actionBarSize"
     tools:context=".view.FavoriteFragment">
 
-    <LinearLayout
+    <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/background"
         >
 
-    </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="143dp"
+            android:layout_height="114dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/baseline_add_24"
+            android:tint="@android:color/white" />
+</RelativeLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
