@@ -12,13 +12,15 @@
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        android:clickable="true"
+       android:elevation="10dp"
+       app:cardBackgroundColor="@android:color/transparent"
        >
        <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="200dp"
            android:orientation="vertical"
            android:background="@drawable/rectangle"
-           android:layout_margin="10dp"
+
            >
            <ImageView
                android:id="@+id/remove_img"

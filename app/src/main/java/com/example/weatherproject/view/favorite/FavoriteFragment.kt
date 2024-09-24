@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentFavoriteBinding
 import com.example.weatherproject.db.WeatherDataBase
@@ -64,7 +65,7 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         favViewModel = ViewModelProvider(this, favFactory).get(FavFragmentViewModel::class.java)
         favViewModel.getAllLocalWeather()
         favAdapter = WeatherFavAdapter(this,this)
-        mLayoutManager = GridLayoutManager(requireContext(),2)
+        mLayoutManager = GridLayoutManager(requireContext(),1)
         recyclerView.apply {
             adapter = favAdapter
             layoutManager = mLayoutManager
@@ -73,7 +74,13 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
             if (weather != null && weather.isNotEmpty()) {
                 favAdapter.submitList(weather)
                 favAdapter.notifyDataSetChanged()
+                binding.emptyFavorits.visibility = View.INVISIBLE
+                binding.noFavTxt.visibility = View.INVISIBLE
+                binding.favRecycler.visibility = View.VISIBLE
             } else {
+                binding.emptyFavorits.visibility = View.VISIBLE
+                binding.noFavTxt.visibility = View.VISIBLE
+                binding.favRecycler.visibility = View.INVISIBLE
                 Log.i("TAG", "FavoriteFragment No weather data available.")
             }
         } )
@@ -85,5 +92,6 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
 
     override fun removeFromFav(weather: WeatherModel) {
         favViewModel.deleteWeather(weather)
+        favAdapter.notifyDataSetChanged()
     }
 }

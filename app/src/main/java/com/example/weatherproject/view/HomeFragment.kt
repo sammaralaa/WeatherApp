@@ -235,7 +235,7 @@ class HomeFragment : Fragment() {
                         viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang,unite)
 
                         // Observe the weather data and update the UI
-                        viewModel.weather.observe(viewLifecycleOwner) { weatherResponse ->
+                        viewModel.weather.observe(this@HomeFragment) { weatherResponse ->
                             updateUI(weatherResponse)
                         }
 
