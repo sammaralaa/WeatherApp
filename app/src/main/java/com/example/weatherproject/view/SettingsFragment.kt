@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentSettingsBinding
+import com.example.weatherproject.db.WeatherDataBase
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
@@ -76,7 +77,7 @@ class SettingsFragment : Fragment() {
         mhButton = binding.mhRadioButton
         allFactory = HomeFragmentViewModelFactory(
             WeatherRepository.getInstance(
-                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(),
+                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
                 SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)

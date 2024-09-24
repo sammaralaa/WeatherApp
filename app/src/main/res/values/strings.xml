@@ -30,6 +30,7 @@
     <string name="search">Search for a location</string>
     <string name="confirm">Confirmation</string>
     <string name="conf">Are you sure you want to change your location?</string>
+    <string name="favConf">Are you sure you want to add this location to your favorite locations?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>
