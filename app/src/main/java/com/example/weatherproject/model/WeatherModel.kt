@@ -4,7 +4,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "weather_data")
-data class WheatherModel(@PrimaryKey val name: String,
+data class WeatherModel(@PrimaryKey val name: String,
                          val  lat : Double,
                          val  lon : Double,
                          val temp: Double,
