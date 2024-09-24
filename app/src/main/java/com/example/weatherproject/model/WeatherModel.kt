@@ -1,22 +1,16 @@
 package com.example.weatherproject.model
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "weather_data")
-data class WheatherModel(  val coord: Coord,
-                           val weather: ArrayList<Weather>,
-                           val base: String,
-                           val main: Main,
-                           val visibility: Int,
-                           val wind: Wind,
-                           val rain: Rain?,
-                           val clouds: Clouds,
-                           val dt: Long,
-                           val sys: Sys,
-                           val timezone: Int,
-                           val id: Int,
-                           val name: String,
-                           val cod: Int
+data class WheatherModel(@PrimaryKey val name: String,
+                         val  lat : Double,
+                         val  lon : Double,
+                         val temp: Double,
+                         val pressure: Int,
+                         val humidity: Int,
+                         var description : String,
     ){}
 
 data class Clouds(var all : Int)
