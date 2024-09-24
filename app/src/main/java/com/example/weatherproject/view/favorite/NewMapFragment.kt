@@ -1,4 +1,4 @@
-package com.example.weatherproject.view
+package com.example.weatherproject.view.favorite
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,11 +13,21 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
-import com.example.weatherproject.databinding.FragmentMapBinding
+import com.example.weatherproject.databinding.FragmentNewMapBinding
+import com.example.weatherproject.db.WeatherDataBase
+import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.local.WeatherLocalDataSource
+import com.example.weatherproject.model.shared_preferences.SharedDataSource
+import com.example.weatherproject.network.RetrofitHelper
+import com.example.weatherproject.network.remote.WeatherRemoteDataSource
+import com.example.weatherproject.view_model.favorite.FavFragmentViewModel
+import com.example.weatherproject.view_model.favorite.FavFragmentViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,24 +41,28 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
 import java.net.URL
-import kotlin.concurrent.thread
 
-class MapFragment : Fragment() {
-    lateinit var _binding: FragmentMapBinding
+
+class NewMapFragment : Fragment() {
+
+    lateinit var binding: FragmentNewMapBinding
     lateinit var mapView: MapView
     private lateinit var autoCompleteTextView: AutoCompleteTextView
+    private lateinit var viewModel: FavFragmentViewModel
+    private lateinit var favFactory: FavFragmentViewModelFactory
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        _binding= FragmentMapBinding.inflate(inflater, container, false)
-        return _binding.root
+        binding = FragmentNewMapBinding.inflate(inflater, container, false)
+        favFactory = FavFragmentViewModelFactory(
+            WeatherRepository.getInstance(
+            WeatherRemoteDataSource(RetrofitHelper.service),
+            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
+            SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
+        ))
+        viewModel = ViewModelProvider(this, favFactory).get(FavFragmentViewModel::class.java)
+        return binding.root
     }
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,11 +70,11 @@ class MapFragment : Fragment() {
         Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
 
         // Initialize the MapView
-         mapView = _binding.map // Access the map view using view binding
+        mapView = binding.newMap // Access the map view using view binding
         mapView.setMultiTouchControls(true)
         mapView.controller.setZoom(8.0)
 
-        autoCompleteTextView = _binding.autoCompleteSearch
+        autoCompleteTextView = binding.newAutoCompleteSearch
         setupAutoCompleteSearch()
 
 //        // Set a default location
@@ -74,16 +88,14 @@ class MapFragment : Fragment() {
             override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
                 // Handle single tap here
                 p?.let {
-                   // val geoPoint: GeoPoint = mapView.projection.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
+                    // val geoPoint: GeoPoint = mapView.projection.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
                     val lat = p.latitude
                     val lon = p.longitude
 
                     // Add a marker at the selected location
-                     addMarker(p)
-                    saveData("lon",lon)
-                    saveData("lat",lat)
+                    addMarker(p)
                     Log.i("TAG", "onViewCreated: Selected Location: Lat: $lat, Lon: $lon")
-                    showDialog()
+                    showDialog(p)
                 }
                 return true // return true if event is handled
             }
@@ -98,37 +110,35 @@ class MapFragment : Fragment() {
         mapView.overlays.add(overlayEvents)
     }
     private fun addMarker(point: GeoPoint) {
-        val marker = Marker(_binding.map)
+        val marker = Marker(mapView)
         marker.position = point
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         marker.title = "Selected Location"
         marker.setOnMarkerClickListener { m, mapView ->
             // Show marker info when clicked
             InfoWindow.closeAllInfoWindowsOn(mapView)
-            showDialog()
+            showDialog(point)
             true
         }
-        _binding.map.overlays.add(marker)
-        _binding.map.invalidate() // Refresh the map
+        mapView.overlays.add(marker)
+        mapView.invalidate() // Refresh the map
+    }
+    private fun removeMarker(point : GeoPoint){
+        val marker = Marker(mapView)
+        marker.position = point
+        mapView.overlays.remove(marker)
     }
     override fun onResume() {
         super.onResume()
-        _binding.map.onResume()
+        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        _binding.map.onPause()
+        mapView.onPause()
     }
-    private fun saveData(key: String, value: Double) {
-        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putFloat(key, value.toFloat())
-        editor.apply() // or editor.commit() for synchronous saving
-        Log.i("TAG", "saveData: $key == $value ")
-    }
-    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
-    private fun showDialog(){
+    @SuppressLint("MissingInflatedId")
+    private fun showDialog(p: GeoPoint){
         val option = false
         val inflater = layoutInflater
         val dialogView = inflater.inflate(R.layout.custom_dialog_layout, null)
@@ -136,18 +146,19 @@ class MapFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setView(dialogView)
         val alertDialog = builder.create()
-
         var yes = dialogView.findViewById<Button>(R.id.yes_btn)
         var no = dialogView.findViewById<Button>(R.id.no_btn)
-
-            yes.setOnClickListener{
-                findNavController().navigate(R.id.action_mapFragment_to_homeFragment)
-                alertDialog.dismiss()
-            }
-            no.setOnClickListener{
-                Toast.makeText(requireContext(), "You clicked No", Toast.LENGTH_SHORT).show()
-                alertDialog.dismiss()
-            }
+        dialogView.findViewById<TextView>(R.id.dialogMessage).text= getString(R.string.favConf)
+        yes.setOnClickListener{
+           // findNavController().navigate(R.id.action_mapFragment_to_homeFragment)
+            addToFav(p)
+            alertDialog.dismiss()
+            findNavController().navigate(R.id.action_newMapFragment_to_favoriteFragment)
+        }
+        no.setOnClickListener{
+            Toast.makeText(requireContext(), "You clicked No", Toast.LENGTH_SHORT).show()
+            alertDialog.dismiss()
+        }
         alertDialog.show()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
@@ -206,7 +217,7 @@ class MapFragment : Fragment() {
     private fun fetchLocationSuggestions(query: String, callback: (List<String>) -> Unit) {
         GlobalScope.launch {
             try {
-                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5"
+                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=10"
                 val response = URL(url).readText()
                 val jsonArray = JSONArray(response)
 
@@ -232,7 +243,7 @@ class MapFragment : Fragment() {
     private fun fetchCoordinatesForLocation(query: String, callback: (Double, Double) -> Unit) {
         GlobalScope.launch {
             try {
-                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=2"
+                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=10"
                 val response = URL(url).readText()
                 val jsonArray = JSONArray(response)
 
@@ -252,6 +263,10 @@ class MapFragment : Fragment() {
             }
         }
     }
-/*  FavoriteFragmentDirections.ActionFavoriteFragmentToFavMealDetailsFragment action = FavoriteFragmentDirections.actionFavoriteFragmentToFavMealDetailsFragment(meal);
-        Navigation.findNavController(this.getView()).navigate(action);*/
+
+    private fun addToFav(p: GeoPoint){
+        viewModel.insertWeather(p.latitude,p.longitude,"en","metric")
+    }
+
 }
+

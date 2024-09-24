@@ -1,4 +1,4 @@
-package com.example.weatherproject.view
+package com.example.weatherproject.view.settings
 
 import android.content.Context
 import android.os.Build
