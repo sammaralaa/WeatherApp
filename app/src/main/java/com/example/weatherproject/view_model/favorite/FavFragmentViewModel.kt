@@ -26,27 +26,18 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
             }
         }
     }
-    fun insertWeather(weatherModel: WeatherModel){
-        viewModelScope.launch {
-            repository.insertWeather(weatherModel)
+    fun insertWeather(lat: Double, lon: Double,lang : String,unit:String){
+        viewModelScope.launch(Dispatchers.IO){
+            var w = repository.getCurrentWeather(lat,lon,lang,unit)
+            var wm = WeatherModel(w?.name?:"",w?.coord?.lat?:0.0,w?.coord?.lon?:0.0,w?.main?.temp?:0.0,w?.main?.pressure?:0,w?.main?.humidity?:0,w?.weather?.get(0)?.description?:"")
+            repository.insertWeather(wm)
+            getAllLocalWeather()
         }
     }
     fun deleteWeather(weatherModel: WeatherModel){
         viewModelScope.launch {
             repository.deleteWeather(weatherModel)
             getAllLocalWeather()
-        }
-    }
-    fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
-
-        viewModelScope.launch(Dispatchers.IO){
-            var w = repository.getCurrentWeather(lat,lon,lang,unit)
-            withContext(Dispatchers.Main){
-                var wm = WeatherModel(w?.name?:"",w?.coord?.lat?:0.0,w?.coord?.lon?:0.0,w?.main?.temp?:0.0,w?.main?.pressure?:0,w?.main?.humidity?:0,w?.weather?.get(0)?.description?:"")
-                repository.insertWeather(wm)
-                getAllLocalWeather()
-            }
-            Log.i("TAG", "viewModel: ${w?.wind?.deg}")
         }
     }
 }

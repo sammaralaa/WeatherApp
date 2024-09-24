@@ -127,7 +127,7 @@ class MapFragment : Fragment() {
         editor.apply() // or editor.commit() for synchronous saving
         Log.i("TAG", "saveData: $key == $value ")
     }
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     private fun showDialog(){
         val option = false
         val inflater = layoutInflater

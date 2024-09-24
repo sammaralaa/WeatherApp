@@ -164,7 +164,9 @@ class NewMapFragment : Fragment() {
         dialogView.findViewById<TextView>(R.id.dialogMessage).text= getString(R.string.favConf)
         yes.setOnClickListener{
            // findNavController().navigate(R.id.action_mapFragment_to_homeFragment)
+            addToFav(p)
             alertDialog.dismiss()
+            findNavController().navigate(R.id.action_newMapFragment_to_favoriteFragment)
         }
         no.setOnClickListener{
             Toast.makeText(requireContext(), "You clicked No", Toast.LENGTH_SHORT).show()
@@ -276,7 +278,7 @@ class NewMapFragment : Fragment() {
     }
 
     private fun addToFav(p: GeoPoint){
-
+        viewModel.insertWeather(p.latitude,p.longitude,"en","metric")
     }
 
 }

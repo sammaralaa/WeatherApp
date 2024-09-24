@@ -55,5 +55,9 @@
     <fragment
         android:id="@+id/newMapFragment"
         android:name="com.example.weatherproject.view.NewMapFragment"
-        android:label="NewMapFragment" />
+        android:label="NewMapFragment" >
+        <action
+            android:id="@+id/action_newMapFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment" />
+    </fragment>
 </navigation>
