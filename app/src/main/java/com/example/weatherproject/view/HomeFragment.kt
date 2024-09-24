@@ -27,6 +27,7 @@ import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentHomeBinding
+import com.example.weatherproject.db.WeatherDataBase
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
@@ -55,7 +56,6 @@ class HomeFragment : Fragment() {
     private var unite : String = ""
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
-
     //lateinit var temp : TextView
 //    lateinit var dt : TextView
 //    lateinit var humidity : TextView
@@ -67,7 +67,7 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
             WeatherRemoteDataSource(RetrofitHelper.service),
-            WeatherLocalDataSource(),
+            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
         ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)

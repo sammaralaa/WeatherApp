@@ -54,6 +54,6 @@
     </fragment>
     <fragment
         android:id="@+id/newMapFragment"
-        android:name="com.example.weatherproject.NewMapFragment"
+        android:name="com.example.weatherproject.view.NewMapFragment"
         android:label="NewMapFragment" />
 </navigation>
