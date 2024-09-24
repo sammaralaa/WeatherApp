@@ -3,6 +3,7 @@ package com.example.weatherproject.model
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
+import kotlinx.coroutines.flow.Flow
 
 class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, private var localDataAource: WeatherLocalDataSource, private  var sharedDataSource: SharedDataSource) {
 
@@ -29,5 +30,14 @@ class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, p
     fun setStringFromSharedPref(key: String, value: String) {
        sharedDataSource.setStringFromSharedPref(key,value)
     }
-
+    ////local
+    suspend fun getLocalWeathers() : Flow<List<WeatherModel>>{
+        return localDataAource.getAllWeathers()
+    }
+    suspend fun insertWeather(weatherModel: WeatherModel){
+        localDataAource.insertWeather(weatherModel)
+    }
+    suspend fun deleteWeather(weatherModel: WeatherModel){
+        localDataAource.deleteWeather(weatherModel)
+    }
     }

@@ -4,7 +4,7 @@ import com.example.weatherproject.model.WeatherModel
 import kotlinx.coroutines.flow.Flow
 
 interface IWeatherLocalDataSource {
-    fun getAllWeathers(): Flow<List<WeatherModel>>
-    fun insertWeather(weatherModel: WeatherModel)
-    fun deleteWeather(weatherModel: WeatherModel)
+    suspend fun getAllWeathers(): Flow<List<WeatherModel>>
+    suspend fun insertWeather(weatherModel: WeatherModel)
+    suspend fun deleteWeather(weatherModel: WeatherModel)
 }
