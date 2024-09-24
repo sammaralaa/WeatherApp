@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherproject.databinding.FragmentWeatherItemLayoutBinding
 import com.example.weatherproject.model.WeatherModel
 
-class WeatherFavAdapter(var onFavClickListener: OnFavClickListener) : ListAdapter<WeatherModel, WeatherFavAdapter.ViewHolder>(WeatherDiffutil()) {
+class WeatherFavAdapter(var onFavClickListener: OnFavClickListener,var onRemoveFavClickListener: OnRemoveFavClickListener) : ListAdapter<WeatherModel, WeatherFavAdapter.ViewHolder>(WeatherDiffutil()) {
     lateinit var binding: FragmentWeatherItemLayoutBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater : LayoutInflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -24,6 +24,9 @@ class WeatherFavAdapter(var onFavClickListener: OnFavClickListener) : ListAdapte
           holder.binding.cardName.setOnClickListener{
                 onFavClickListener.showWeather(currentWeather.lat,currentWeather.lon)
           }
+        holder.binding.removeImg.setOnClickListener{
+            onRemoveFavClickListener.removeFromFav(currentWeather)
+        }
     }
 
     class ViewHolder(var binding: FragmentWeatherItemLayoutBinding): RecyclerView.ViewHolder(binding.root){

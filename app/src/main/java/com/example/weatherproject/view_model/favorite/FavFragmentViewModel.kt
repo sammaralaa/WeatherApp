@@ -20,9 +20,12 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
         getAllLocalWeather()
     }
     fun getAllLocalWeather(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.getLocalWeathers().collect{weathers->
-                _weather.postValue(weathers)
+                withContext(Dispatchers.Main){
+                    _weather.postValue(weathers)
+                }
+                Log.i("TAG", "getAllLocalWeather: ")
             }
         }
     }
@@ -35,7 +38,7 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
         }
     }
     fun deleteWeather(weatherModel: WeatherModel){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteWeather(weatherModel)
             getAllLocalWeather()
         }

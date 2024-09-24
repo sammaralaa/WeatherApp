@@ -7,18 +7,18 @@
     tools:context=".view.favorite.WeatherItemLayoutFragment">
 
    <androidx.cardview.widget.CardView
-       android:layout_width="wrap_content"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content"
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        android:clickable="true"
-
        >
        <LinearLayout
-           android:layout_width="200dp"
+           android:layout_width="match_parent"
            android:layout_height="200dp"
            android:orientation="vertical"
            android:background="@drawable/rectangle"
+           android:layout_margin="10dp"
            >
            <ImageView
                android:id="@+id/remove_img"

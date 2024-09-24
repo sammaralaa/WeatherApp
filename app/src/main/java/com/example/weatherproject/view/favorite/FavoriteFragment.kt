@@ -2,6 +2,7 @@ package com.example.weatherproject.view.favorite
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentFavoriteBinding
 import com.example.weatherproject.db.WeatherDataBase
+import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
@@ -27,7 +29,7 @@ import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
-class FavoriteFragment : Fragment(),OnFavClickListener{
+class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
     lateinit var binding : FragmentFavoriteBinding
     lateinit var fab : FloatingActionButton
     lateinit var recyclerView: RecyclerView
@@ -60,20 +62,28 @@ class FavoriteFragment : Fragment(),OnFavClickListener{
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
         ))
         favViewModel = ViewModelProvider(this, favFactory).get(FavFragmentViewModel::class.java)
-
-        favAdapter = WeatherFavAdapter(this)
-        mLayoutManager = GridLayoutManager(requireContext(),2, RecyclerView.VERTICAL, false)
+        favViewModel.getAllLocalWeather()
+        favAdapter = WeatherFavAdapter(this,this)
+        mLayoutManager = GridLayoutManager(requireContext(),2)
         recyclerView.apply {
             adapter = favAdapter
             layoutManager = mLayoutManager
         }
         favViewModel.weather.observe(viewLifecycleOwner , Observer { weather ->
-            favAdapter.submitList(weather)
-            favAdapter.notifyDataSetChanged()
+            if (weather != null && weather.isNotEmpty()) {
+                favAdapter.submitList(weather)
+                favAdapter.notifyDataSetChanged()
+            } else {
+                Log.i("TAG", "FavoriteFragment No weather data available.")
+            }
         } )
     }
 
     override fun showWeather(lat: Double, lon: Double) {
 
+    }
+
+    override fun removeFromFav(weather: WeatherModel) {
+        favViewModel.deleteWeather(weather)
     }
 }
