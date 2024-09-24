@@ -5,16 +5,16 @@ import com.example.weatherproject.db.WeatherDao
 import com.example.weatherproject.model.WeatherModel
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalDataSource(var dao : WeatherDao) {
+class WeatherLocalDataSource(var dao : WeatherDao) : IWeatherLocalDataSource {
 
-    fun getAllWeathers() : Flow<List<WeatherModel>>{
+    override fun getAllWeathers() : Flow<List<WeatherModel>>{
         return dao.getAll()
     }
-    fun insertWeather(weatherModel: WeatherModel){
+    override fun insertWeather(weatherModel: WeatherModel){
         var l = dao.insert(weatherModel)
         Log.i("TAG", "insertWeather: $l from weatherLocalDataSource")
     }
-    fun deleteWeather(weatherModel: WeatherModel){
+    override fun deleteWeather(weatherModel: WeatherModel){
         dao.delete(weatherModel)
     }
 
