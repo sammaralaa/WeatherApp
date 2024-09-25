@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
@@ -32,6 +33,8 @@ import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
+import com.example.weatherproject.network.ApiState
+import com.example.weatherproject.network.ApiStateForcast
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
@@ -41,6 +44,8 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     var lattitudeValue : Double = 0.0
@@ -56,13 +61,7 @@ class HomeFragment : Fragment() {
     private var unite : String = ""
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
-    //lateinit var temp : TextView
-//    lateinit var dt : TextView
-//    lateinit var humidity : TextView
-//    lateinit var wind : TextView
-//    lateinit var cloud : TextView
-//    lateinit var pressure : TextView
-//    lateinit var city : TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
@@ -71,8 +70,6 @@ class HomeFragment : Fragment() {
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
         ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
-        // viewModel.getCurrentWeather(10.99, 44.34)
-
         updateConfig()
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,14 +81,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        desc = binding.precipitationText
-        //temp = binding.temperatureText
-//        dt = binding.maxMinTemperature
-//        humidity = binding.humidityValuetxt
-//        wind = binding.windValuetxt
-//        cloud = binding.cloudValuetxt
-//        pressure = binding.pressureValuetxt
-//        city = binding.cityNametxt
+
         val toolbar = (activity as AppCompatActivity).supportActionBar
         val navIcon = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_menu_24)
         navIcon?.setTint(ContextCompat.getColor(requireContext(), R.color.white)) // Change color
@@ -111,20 +101,20 @@ class HomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+            updateConfig()
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
                var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
                var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
                 updateConfig()
-                viewModel.getCurrentWeather(lat.toDouble(),lon.toDouble(),lang,unite)
-                viewModel.weather.observe(viewLifecycleOwner) { w ->
-                    updateUI(w)
-                }
+                getCurrentWeather(lat,lon,lang,unite)
+                getForcastWeather(lat,lon,lang,unite)
             }
         }else{
             viewModel.addSelected(requireActivity())
             showLocationDialog()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showLocationDialog() {
         val options = arrayOf("Use GPS", "Enter Location Manually")
@@ -141,10 +131,9 @@ class HomeFragment : Fragment() {
                                 Log.i("TAG", "showLocationDialog: isLocationEnabled")
                                 getFreshLocation()
                                 Log.i("TAG", "isLocationEnabled: ")
-//                                viewModel.getCurrentWeather(lattitudeValue,longituteValue)
-//                                viewModel.weather.observe(viewLifecycleOwner) { w ->
-//                                    updateUI(w)
-//                                }
+                                updateConfig()
+                                getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
+//
                             }else{
                                 Log.i("TAG", "showLocationDialog: isLocationEnabled else")
                                 enableLocationServices()
@@ -229,15 +218,10 @@ class HomeFragment : Fragment() {
                         viewModel.saveData("lon", longituteValue, requireActivity())
                         viewModel.saveData("lat", lattitudeValue, requireActivity())
 
-                        // Update weather based on the retrieved location
                         updateConfig()
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
-                        viewModel.getCurrentWeather(lattitudeValue, longituteValue,lang,unite)
-
-                        // Observe the weather data and update the UI
-                        viewModel.weather.observe(this@HomeFragment) { weatherResponse ->
-                            updateUI(weatherResponse)
-                        }
+                        getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
+                        getForcastWeather(lattitudeValue,longituteValue,lang,unite)
 
                     } else {
                         Log.e("TAG", "No location detected")
@@ -251,11 +235,87 @@ class HomeFragment : Fragment() {
 
 
 
+
+
+    @SuppressLint("NewApi")
+    fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String){
+        lifecycleScope.launch {
+            updateConfig()
+            viewModel.getCurrentWeather(lat,lon,lang,unit)
+            Log.i("TAG", "getCurrentWeather: frament ")
+            viewModel.weatherStateFlow.collectLatest { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+
+                        Log.i("TAG", "Loading products...")
+                    }
+                    is ApiState.Success -> {
+                        updateUI(state.data)
+                    }
+                    is ApiState.Failure -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to load weather, please try again",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e("TAG", "Error loading weather: ${state.msg}")
+                    }
+
+                }
+            }
+        }
+    }
+    @SuppressLint("NewApi")
+    fun getForcastWeather(lat: Double, lon: Double,lang : String,unit:String){
+        lifecycleScope.launch {
+            updateConfig()
+            viewModel.getForcastWeather(lat,lon,lang,unit)
+            Log.i("TAG", "getCurrentWeather: frament ")
+            viewModel.weatherHourlyStateFlow.collectLatest { state ->
+                when (state) {
+                    is ApiStateForcast.Loading -> {
+
+                        Log.i("TAG", "Loading products...")
+                    }
+                    is ApiStateForcast.Success -> {
+                        Log.i("TAG", "getForcastWeather: Hourly ---> ${state.data.size}")
+                    }
+                    is ApiStateForcast.Failure -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to load weather, please try again",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e("TAG", "Error loading weather: ${state.msg}")
+                    }
+
+                }
+            }
+
+        }
+        lifecycleScope.launch {
+            viewModel.weatherDaileStateFlow.collectLatest { state->
+                when(state){
+                    is ApiStateForcast.Failure -> {
+
+                    }
+                    ApiStateForcast.Loading ->{
+
+                    }
+                    is ApiStateForcast.Success -> {
+                        Log.i("TAG", "getForcastWeather: Daily ---> ${state.data.size}")
+                    }
+                }
+            }
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateUI(response : WeatherResponse?){
+        Log.i("TAG", "updateUI: ${response.toString()}")
         binding.precipitationText.text = response?.weather?.get(0)?.description
-        binding.temperatureText.text = response?.main?.temp?.toString()
+        binding.temperatureText.text = response?.main?.temp.toString()
         binding.maxMinTemperature.text = viewModel.getCurrentDateTime()
+        Log.i("TAG", "updateUI: ${viewModel.getCurrentDateTime()}")
         binding.humidityValuetxt.text = response?.main?.humidity?.toString()
         binding.windValuetxt.text = response?.wind?.speed?.toString()
         binding.cloudValuetxt.text = response?.clouds?.all.toString()

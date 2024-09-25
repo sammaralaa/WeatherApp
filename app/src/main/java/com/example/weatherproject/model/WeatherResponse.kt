@@ -17,3 +17,10 @@ data class WeatherResponse(
     val name: String,
     val cod: Int
 )
+data class WeatherForcastResponse(
+    val cod : String,
+    val message : Int,
+    val cnt : Int,
+    val list : List<WeatherForcastModel>,
+    val city: City
+    )

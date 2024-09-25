@@ -1,4 +1,5 @@
 package com.example.weatherproject.network
+import com.example.weatherproject.model.WeatherForcastResponse
 import com.example.weatherproject.model.WeatherResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,16 +16,16 @@ interface ApiService {
         @Query("lon") longitude: Double,
         @Query("lang") lang:String,
         @Query("units") unit : String,
-        @Query("appid") apiKey: String): Response<WeatherResponse>
+        @Query("appid") apiKey: String): WeatherResponse
 
     @GET("forecast")
-    suspend fun getHourlyForecast(
+    suspend fun getForecastWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("lang") lang: String,
         @Query("units") units: String,
         @Query("appid") apiKey: String
-    ): Response<WeatherResponse>
+    ): WeatherForcastResponse
 
 
     @GET("forecast")

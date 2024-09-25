@@ -31,9 +31,9 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
     }
     fun insertWeather(lat: Double, lon: Double,lang : String,unit:String){
         viewModelScope.launch(Dispatchers.IO){
-            var w = repository.getCurrentWeather(lat,lon,lang,unit)
-            var wm = WeatherModel(w?.name?:"",w?.coord?.lat?:0.0,w?.coord?.lon?:0.0,w?.main?.temp?:0.0,w?.main?.pressure?:0,w?.main?.humidity?:0,w?.weather?.get(0)?.description?:"")
-            repository.insertWeather(wm)
+//            var w = repository.getCurrentWeather(lat,lon,lang,unit)
+//            var wm = WeatherModel(w?.name?:"",w?.coord?.lat?:0.0,w?.coord?.lon?:0.0,w?.main?.temp?:0.0,w?.main?.pressure?:0,w?.main?.humidity?:0,w?.weather?.get(0)?.description?:"")
+//            repository.insertWeather(wm)
             getAllLocalWeather()
         }
     }
