@@ -13,4 +13,10 @@ interface IWeatherRemoteDataSource {
         unit: String
     ): WeatherResponse?
 
+    suspend fun getHourlyWeather(
+        lat: Double,
+        lon: Double,
+        lang: String,
+        unit: String
+    ): WeatherResponse?
 }

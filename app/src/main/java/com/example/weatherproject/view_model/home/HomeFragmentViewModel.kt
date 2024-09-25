@@ -26,6 +26,9 @@ const val  REQUEST_LOCATION_CODE = 2001
 class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
     private val _weather = MutableLiveData<WeatherResponse?>()
     val weather: LiveData<WeatherResponse?> = _weather
+
+    private val _hourlyWeather = MutableLiveData<WeatherResponse?>()
+    val hourlyWeather: LiveData<WeatherResponse?> = _hourlyWeather
      var w :WeatherResponse? = null
     var wind : Wind? = null
 
@@ -37,6 +40,17 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
                _weather.postValue(w)
            }
            Log.i("TAG", "viewModel: ${w?.wind?.deg}")
+        }
+    }
+
+    fun getHourlyWeather(lat: Double, lon: Double,lang : String,unit:String) {
+
+        viewModelScope.launch(Dispatchers.IO){
+            w = repo.getHourlyWeather(lat,lon,lang,unit)
+            withContext(Dispatchers.Main){
+                _weather.postValue(w)
+            }
+            Log.i("TAG", "viewModel: ${w?.wind?.deg}")
         }
     }
 

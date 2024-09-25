@@ -24,6 +24,9 @@ class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, p
     suspend fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit : String) : WeatherResponse?{
         return remoteDataSource.getCurrentWeather(lat,lon,lang,unit)
     }
+    suspend fun getHourlyWeather(lat: Double, lon: Double,lang : String,unit : String) : WeatherResponse?{
+        return remoteDataSource.getHourlyWeather(lat,lon,lang,unit)
+    }
     fun getStringFromSharedPref(key : String) : String?{
         return sharedDataSource.getStringFromSharedPref(key)
     }

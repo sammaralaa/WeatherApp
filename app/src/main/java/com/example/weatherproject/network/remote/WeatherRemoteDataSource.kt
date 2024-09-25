@@ -22,5 +22,20 @@ class WeatherRemoteDataSource(var apiObj : ApiService) : IWeatherRemoteDataSourc
         }
     }
 
+    override suspend fun getHourlyWeather(
+        lat: Double,
+        lon: Double,
+        lang: String,
+        unit: String
+    ): WeatherResponse? {
+        val response = apiObj.getHourlyForecast(lat, lon, lang ,unit,API_KEY)
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            Log.i("TAG", "getCurrentWeather: onFailure")
+            null
+        }
+    }
+
 
 }

@@ -17,6 +17,26 @@ interface ApiService {
         @Query("units") unit : String,
         @Query("appid") apiKey: String): Response<WeatherResponse>
 
+    @GET("forecast")
+    suspend fun getHourlyForecast(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("lang") lang: String,
+        @Query("units") units: String,
+        @Query("appid") apiKey: String
+    ): Response<WeatherResponse>
+
+
+    @GET("forecast")
+    suspend fun getDailyForecast(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("lang") lang: String,
+        @Query("cnt") count: Int,
+        @Query("units") units: String,
+        @Query("appid") apiKey: String
+    ): Response<WeatherResponse>
+
 }
 object RetrofitHelper {
 
