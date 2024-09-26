@@ -1,17 +1,11 @@
 package com.example.weatherproject.view
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.airbnb.lottie.LottieAnimationView
 import com.example.weatherproject.R
-import com.example.weatherproject.model.WeatherRepository
-import com.example.weatherproject.model.local.WeatherLocalDataSource
-import com.example.weatherproject.model.shared_preferences.SharedDataSource
-import com.example.weatherproject.network.RetrofitHelper
-import com.example.weatherproject.network.remote.WeatherRemoteDataSource
+import com.example.weatherproject.view.home.HomeActivity
 
 class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId", "SuspiciousIndentation")

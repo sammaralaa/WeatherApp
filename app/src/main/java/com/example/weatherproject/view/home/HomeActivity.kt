@@ -1,4 +1,4 @@
-package com.example.weatherproject.view
+package com.example.weatherproject.view.home
 
 import android.os.Bundle
 import android.view.MenuItem
