@@ -35,4 +35,5 @@
     <string name="no">No</string>
     <string name="empty">You have no favorite locations</string>
     <string name="today">Today</string>
+    <string name="day_forcast">5-Days Forecasts</string>
 </resources>
