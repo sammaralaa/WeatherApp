@@ -130,8 +130,8 @@ class HomeFragment : Fragment() {
         if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
             updateConfig()
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
-               var lon =  viewModel.getDataFromSharedPref(requireActivity()).first
-               var lat =  viewModel.getDataFromSharedPref(requireActivity()).second
+               var lon =  viewModel.getDataFromSharedPref().first
+               var lat =  viewModel.getDataFromSharedPref().second
                 updateConfig()
                 getCurrentWeather(lat,lon,lang,unite)
                 getForcastWeather(lat,lon,lang,unite)

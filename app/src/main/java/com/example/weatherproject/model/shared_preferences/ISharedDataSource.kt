@@ -6,4 +6,6 @@ interface ISharedDataSource {
     var sharedPreference: SharedPreferences
     fun getStringFromSharedPref(key: String): String?
     fun setStringFromSharedPref(key: String, value: String)
+    fun removeFromSharedPref(key : String)
+    fun getDataFromSharedPref(): Pair<Double, Double>
 }

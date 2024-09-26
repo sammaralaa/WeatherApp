@@ -33,6 +33,12 @@ class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, p
     fun setStringFromSharedPref(key: String, value: String) {
        sharedDataSource.setStringFromSharedPref(key,value)
     }
+    fun removeFromSharedPref(key : String){
+        sharedDataSource.removeFromSharedPref(key)
+    }
+    fun getCoordFromSharedPref():Pair<Double,Double>{
+        return sharedDataSource.getDataFromSharedPref()
+    }
     ////local
     suspend fun getLocalWeathers() : Flow<List<WeatherModel>>{
         return localDataAource.getAllWeathers()

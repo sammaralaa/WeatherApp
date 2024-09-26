@@ -90,11 +90,8 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
         val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         return sharedPreferences.contains(key)
     }
-    fun getDataFromSharedPref(activity: Activity) : Pair<Double,Double>{
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        var lon =  sharedPreferences.getFloat("lon", 0.0f)
-        var lat =  sharedPreferences.getFloat("lat", 0.0f)
-        return Pair(lon.toDouble(),lat.toDouble())
+    fun getDataFromSharedPref() : Pair<Double,Double>{
+        return repo.getCoordFromSharedPref()
     }
     @SuppressLint("SuspiciousIndentation")
     fun addSelected(activity: Activity){
@@ -115,6 +112,9 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     }
     fun getStringFromSharedPref(key : String) : String?{
         return repo.getStringFromSharedPref(key)
+    }
+    fun removeFromSharedPref(key : String){
+        repo.removeFromSharedPref(key)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun getCurrentDateTime(): String {

@@ -90,7 +90,7 @@ class SettingsFragment : Fragment() {
             }
             else if(gpsButton.id == checkedId){
                 viewModel.saveData("location","gps")
-
+                viewModel.removeFromSharedPref("lon")
             }
         }
 
