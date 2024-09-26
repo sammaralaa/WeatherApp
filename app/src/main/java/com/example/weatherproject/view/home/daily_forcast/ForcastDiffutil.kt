@@ -1,4 +1,4 @@
-package com.example.weatherproject.view.home
+package com.example.weatherproject.view.home.daily_forcast
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.weatherproject.model.WeatherForcastModel

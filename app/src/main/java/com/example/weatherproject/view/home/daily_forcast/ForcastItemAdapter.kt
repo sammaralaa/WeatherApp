@@ -1,4 +1,4 @@
-package com.example.weatherproject.view.home
+package com.example.weatherproject.view.home.daily_forcast
 
 import android.content.Context
 import android.os.Build
@@ -9,16 +9,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherproject.databinding.FragmentForcastItemBinding
-import com.example.weatherproject.databinding.FragmentWeatherItemLayoutBinding
 import com.example.weatherproject.model.WeatherForcastModel
-import com.example.weatherproject.model.WeatherModel
-import com.example.weatherproject.view.favorite.WeatherDiffutil
-import com.example.weatherproject.view.favorite.WeatherFavAdapter
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ForcastItemAdapter : ListAdapter<WeatherForcastModel, ForcastItemAdapter.ViewHolder>(ForcastDiffutil()) {
+class ForcastItemAdapter : ListAdapter<WeatherForcastModel, ForcastItemAdapter.ViewHolder>(
+    ForcastDiffutil()
+) {
     lateinit var binding: FragmentForcastItemBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater : LayoutInflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
