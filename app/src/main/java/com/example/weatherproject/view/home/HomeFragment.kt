@@ -42,6 +42,7 @@ import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
 import com.example.weatherproject.view.home.daily_forcast.ForcastItemAdapter
+import com.example.weatherproject.view.home.hourly_forcast.ForcastHourlyAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -65,9 +66,14 @@ class HomeFragment : Fragment() {
     private var unite : String = ""
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
+
     lateinit var dailyAdapter : ForcastItemAdapter
     lateinit var dailyRecyclerView: RecyclerView
     private lateinit var dailyLayoutManager: LayoutManager
+
+    lateinit var hourlyAdapter : ForcastHourlyAdapter
+    lateinit var hourlyRecyclerView: RecyclerView
+    private lateinit var hourlyLayoutManager: LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +112,14 @@ class HomeFragment : Fragment() {
         dailyRecyclerView.apply {
             adapter = dailyAdapter
             layoutManager = dailyLayoutManager
+        }
+
+        hourlyRecyclerView = binding.hourlyRecycler
+        hourlyAdapter = ForcastHourlyAdapter()
+        hourlyLayoutManager = LinearLayoutManager(requireContext(),RecyclerView.HORIZONTAL,false)
+        hourlyRecyclerView.apply {
+            adapter=hourlyAdapter
+            layoutManager=hourlyLayoutManager
         }
     }
 
@@ -287,6 +301,7 @@ class HomeFragment : Fragment() {
                         Log.i("TAG", "Loading products...")
                     }
                     is ApiStateForcast.Success -> {
+                        hourlyAdapter.submitList(state.data)
                         Log.i("TAG", "getForcastWeather: Hourly ---> ${state.data.size}")
                     }
                     is ApiStateForcast.Failure -> {
