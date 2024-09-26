@@ -26,7 +26,7 @@
                     android:layout_width="219dp"
                     android:layout_height="219dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/weather" />
 
                 <!-- Temperature Text -->
@@ -53,7 +53,7 @@
                         android:id="@+id/cityNametxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:textColor="#FFFFFF"
                         />
                 </LinearLayout>
@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Precipitations"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textColor="#FFFFFF"/>
 
                 <TextView
@@ -82,7 +82,43 @@
                     android:layout_height="200dp"
                     android:src="@drawable/house"
                 android:layout_marginTop="16dp"
-                android:contentDescription="House image"/>
+               />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@drawable/rounded_corners"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/today" />
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="370dp"
+                        android:layout_height="2dp"
+                        android:layout_gravity="center"
+                        />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:orientation="horizontal"
+                        />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/forcast_daily_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    />
 
                 <LinearLayout
                     android:layout_width="match_parent"
