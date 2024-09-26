@@ -21,15 +21,13 @@
                 android:gravity="center_horizontal"
                 >
 
-                <!-- Weather icon and temperature -->
                 <ImageView
-                    android:layout_width="219dp"
-                    android:layout_height="219dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/weather" />
 
-                <!-- Temperature Text -->
                 <TextView
                     android:id="@+id/temperatureText"
                     android:layout_width="wrap_content"
@@ -37,7 +35,7 @@
                     android:text="19°"
                     android:textSize="56sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="16dp"/>
+                    android:layout_marginTop="8dp"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -57,7 +55,6 @@
                         android:textColor="#FFFFFF"
                         />
                 </LinearLayout>
-                <!-- Precipitation and Temperature Range -->
                 <TextView
                     android:id="@+id/precipitationText"
                     android:layout_width="wrap_content"
@@ -75,13 +72,12 @@
                     android:textColor="#FFFFFF"
                     android:layout_marginTop="4dp"/>
 
-                <!-- House Image -->
                 <ImageView
                     android:id="@+id/houseImage"
-                    android:layout_width="340dp"
+                    android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:src="@drawable/house"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                />
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -102,6 +98,15 @@
                         android:layout_width="370dp"
                         android:layout_height="2dp"
                         android:layout_gravity="center"
+                        />
+                    <ProgressBar
+                        android:id="@+id/hourly_bar"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/white"
+                        android:visibility="gone"
                         />
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/hourly_recycler"
@@ -133,27 +138,31 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageView
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:src="@drawable/humidity"
+                            android:layout_marginEnd="5dp"
+
                             />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:textSize="25dp"
+                            android:textSize="20sp"
                             android:text="@string/humidity"
                             android:layout_weight="1"
                             android:textColor="@color/white"
+                            android:layout_gravity="center_vertical"
                             />
                         <TextView
                             android:id="@+id/humidityValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="25dp"
-                            android:text="value"
+                            android:textSize="20sp"
                             android:textColor="@color/white"
-                            android:layout_marginRight="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_gravity="center_vertical"
+
                             />
                     </LinearLayout>
                     <com.google.android.material.divider.MaterialDivider
@@ -168,26 +177,29 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageView
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:src="@drawable/air"
+                            android:layout_marginEnd="5dp"
                             />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/wind"
-                            android:textSize="25dp"
+                            android:textSize="20sp"
                             android:textColor="@color/white"
+                            android:layout_gravity="center_vertical"
+
                             />
                         <TextView
                             android:id="@+id/windValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="25dp"
-
-                            android:layout_marginRight="15dp"
+                            android:textSize="20sp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
                             />
                     </LinearLayout>
@@ -204,26 +216,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageView
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:src="@drawable/cloud"
+                            android:layout_marginEnd="5dp"
+
                             />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/cloud"
-                            android:textSize="25dp"
+                            android:textSize="20sp"
                             android:textColor="@color/white"
+                            android:layout_gravity="center_vertical"
                             />
                         <TextView
                             android:id="@+id/cloudValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="25dp"
-                            android:layout_marginRight="15dp"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
+                            android:layout_gravity="center_vertical"
                             />
                     </LinearLayout>
 
@@ -240,25 +256,28 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageView
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
                             android:src="@drawable/compress"
+                            android:layout_marginEnd="5dp"
                             />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/pressure"
                             android:textColor="@color/white"
-                            android:textSize="25dp" />
+                            android:layout_gravity="center_vertical"
+                            android:textSize="20sp" />
                         <TextView
                             android:id="@+id/pressureValuetxt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="25dp"
-                            android:layout_marginRight="15dp"
+                            android:textSize="20sp"
+                            android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
+                            android:layout_gravity="center_vertical"
                             />
                     </LinearLayout>
                 </LinearLayout>
