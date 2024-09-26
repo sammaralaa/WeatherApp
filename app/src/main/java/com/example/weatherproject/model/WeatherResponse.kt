@@ -17,6 +17,7 @@ data class WeatherResponse(
     val name: String,
     val cod: Int
 )
+
 data class WeatherForcastResponse(
     val cod : String,
     val message : Int,

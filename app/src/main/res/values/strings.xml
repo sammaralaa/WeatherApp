@@ -34,4 +34,5 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="empty">You have no favorite locations</string>
+    <string name="today">Today</string>
 </resources>

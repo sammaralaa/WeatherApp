@@ -22,14 +22,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
-const val  REQUEST_LOCATION_CODE = 2001
 class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
 //    private val _weather = MutableLiveData<WeatherResponse?>()
 //    val weather: LiveData<WeatherResponse?> = _weather
@@ -46,8 +43,6 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     var wind : Wind? = null
 
     fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
-
-
            viewModelScope.launch {
                repo.getCurrentWeather(lat,lon,lang,unit)
                    .onStart {
@@ -70,10 +65,12 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     fun getForcastWeather(lat: Double, lon: Double, lang : String, unit:String) {
         viewModelScope.launch(Dispatchers.IO){
             repo.getForcastWeather(lat,lon,lang,unit)
-                .onStart { _weatherHourlyStateFlow.value = ApiStateForcast.Loading }
+                .onStart { _weatherHourlyStateFlow.value = ApiStateForcast.Loading
+                            _weatherDailyStateFlow.value = ApiStateForcast.Loading
+                }
                 .catch { e-> _weatherHourlyStateFlow.value = ApiStateForcast.Failure(e) }
 
-                .collect{weather ->
+                .collect{ weather ->
                     val filteredWeatherList = weather.filter { weatherItem ->
                         areSameDay(weatherItem.dt_txt, getCurrentDateTime())
                     }
@@ -84,24 +81,6 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
                     Log.i("TAG", "getForcastWeather: Daily ${filterDailyWeatherList.toString()}")
                     // Emit the filtered weather data
                     _weatherHourlyStateFlow.value = ApiStateForcast.Success(filteredWeatherList)
-                    _weatherDailyStateFlow.value = ApiStateForcast.Success(filterDailyWeatherList)
-                }
-        }
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getDailyWeather(lat: Double, lon: Double, lang : String, unit:String) {
-        viewModelScope.launch(Dispatchers.IO){
-            repo.getForcastWeather(lat,lon,lang,unit)
-                .onStart { _weatherDailyStateFlow.value = ApiStateForcast.Loading }
-                .catch { e-> _weatherDailyStateFlow.value = ApiStateForcast.Failure(e) }
-
-                .collect{weather ->
-                    val filterDailyWeatherList = weather.filter { weatherItem->
-                        isMidnight(weatherItem.dt_txt)
-                    }
-                    //Log.i("TAG", "getForcastWeather: ${filteredWeatherList.toString()}")
-                    // Emit the filtered weather data
-
                     _weatherDailyStateFlow.value = ApiStateForcast.Success(filterDailyWeatherList)
                 }
         }
@@ -146,14 +125,9 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun areSameDay(dateTimeString1: String, dateTimeString2: String): Boolean {
-        // Define the formatter matching your date-time string pattern
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-
-        // Parse the strings to LocalDateTime objects
         val dateTime1 = LocalDateTime.parse(dateTimeString1, formatter)
         val dateTime2 = LocalDateTime.parse(dateTimeString2, formatter)
-
-        // Compare the dates (ignoring the time part)
         return dateTime1.toLocalDate() == dateTime2.toLocalDate()
     }
 
@@ -162,7 +136,6 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val dateTime = LocalDateTime.parse(dateTimeString, formatter)
 
-        // Check if the time is exactly 00:00:00
         return dateTime.toLocalTime().toString() == "00:00"
     }
 }

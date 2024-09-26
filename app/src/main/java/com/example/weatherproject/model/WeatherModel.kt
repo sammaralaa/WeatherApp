@@ -11,7 +11,7 @@ data class WeatherModel(@PrimaryKey val name: String,
                          val pressure: Int,
                          val humidity: Int,
                          var description : String,
-    ){}
+    )
 
 data class Clouds(var all : Int)
 

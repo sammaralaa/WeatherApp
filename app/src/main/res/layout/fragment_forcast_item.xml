@@ -4,22 +4,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background=""
-    tools:context=".ForcastItemFragment">
+   >
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:cardBackgroundColor="@android:color/transparent"
-        >
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rectangle_small"
             android:gravity="center"
             android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="15dp"
             >
             <TextView
                 android:id="@+id/forcast_temp"
@@ -27,21 +22,21 @@
                 android:layout_height="wrap_content"
                 android:text="20"
                 android:textColor="@color/white"
-                android:textSize="25sp"
+                android:textSize="18sp"
                 />
             <ImageView
                 android:id="@+id/forcast_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
             <TextView
                 android:id="@+id/forcast_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20"
                 android:textColor="@color/white"
-                android:textSize="25sp"
+                android:textSize="18sp"
+
                 />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

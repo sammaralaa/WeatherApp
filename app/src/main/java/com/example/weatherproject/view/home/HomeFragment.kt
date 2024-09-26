@@ -24,6 +24,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.HORIZONTAL
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import androidx.recyclerview.widget.RecyclerView.Orientation
 import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
@@ -61,6 +67,9 @@ class HomeFragment : Fragment() {
     private var unite : String = ""
     private var u = utilitis()
     private lateinit var binding: FragmentHomeBinding
+    lateinit var dailyAdapter : ForcastItemAdapter
+    lateinit var dailyRecyclerView: RecyclerView
+    private lateinit var dailyLayoutManager: LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +102,13 @@ class HomeFragment : Fragment() {
         // Optional: Handle the drawer icon click
         toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(navIcon)
-
+        dailyRecyclerView = binding.forcastDailyRecycler
+        dailyAdapter = ForcastItemAdapter()
+        dailyLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL,false)
+        dailyRecyclerView.apply {
+            adapter = dailyAdapter
+            layoutManager = dailyLayoutManager
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -233,10 +248,6 @@ class HomeFragment : Fragment() {
         )
     }
 
-
-
-
-
     @SuppressLint("NewApi")
     fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String){
         lifecycleScope.launch {
@@ -303,6 +314,8 @@ class HomeFragment : Fragment() {
 
                     }
                     is ApiStateForcast.Success -> {
+                        dailyAdapter.submitList(state.data)
+                        dailyAdapter.notifyDataSetChanged()
                         Log.i("TAG", "getForcastWeather: Daily ---> ${state.data.size}")
                     }
                 }
