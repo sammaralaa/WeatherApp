@@ -27,6 +27,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.example.weatherproject.Gpslocation
 import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
@@ -75,6 +76,7 @@ class HomeFragment : Fragment() {
     lateinit var hourlyRecyclerView: RecyclerView
     private lateinit var hourlyLayoutManager: LayoutManager
 
+    lateinit var location : Gpslocation
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
@@ -84,6 +86,21 @@ class HomeFragment : Fragment() {
         ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
         updateConfig()
+        location = Gpslocation(requireContext())
+        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+            updateConfig()
+            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
+                var lon =  viewModel.getDataFromSharedPref().first
+                var lat =  viewModel.getDataFromSharedPref().second
+                updateConfig()
+                getCurrentWeather(lat,lon,lang,unite)
+                getForcastWeather(lat,lon,lang,unite)
+            }
+
+        }else{
+            viewModel.addSelected(requireActivity())
+            showLocationDialog()
+        }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -135,6 +152,28 @@ class HomeFragment : Fragment() {
                 updateConfig()
                 getCurrentWeather(lat,lon,lang,unite)
                 getForcastWeather(lat,lon,lang,unite)
+            }else{
+                if(location.checkPermissions()){
+                    Log.i("TAG", "showLocationDialog: checkPermissions")
+                    if(location.isLocationEnabled()){
+                        Log.i("TAG", "showLocationDialog: isLocationEnabled")
+                        getFreshLocation()
+                        Log.i("TAG", "isLocationEnabled: ")
+                        updateConfig()
+                        getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
+//
+                    }else{
+                        Log.i("TAG", "showLocationDialog: isLocationEnabled else")
+                        location.enableLocationServices()
+                        getFreshLocation()
+                    }
+                }else{
+                    Log.i("TAG", "showLocationDialog: requestPermissions else")
+                    requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE
+                    )
+
+                }
             }
         }else{
             viewModel.addSelected(requireActivity())
@@ -145,16 +184,15 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showLocationDialog() {
         val options = arrayOf("Use GPS", "Enter Location Manually")
-
         AlertDialog.Builder(this.requireContext())
             .setTitle("Choose Location Option")
             .setItems(options) { dialog, which ->
                 when (which) {
                     0 -> {
                         // Use GPS
-                        if(checkPermissions()){
+                        if(location.checkPermissions()){
                             Log.i("TAG", "showLocationDialog: checkPermissions")
-                            if(isLocationEnabled()){
+                            if(location.isLocationEnabled()){
                                 Log.i("TAG", "showLocationDialog: isLocationEnabled")
                                 getFreshLocation()
                                 Log.i("TAG", "isLocationEnabled: ")
@@ -163,7 +201,7 @@ class HomeFragment : Fragment() {
 //
                             }else{
                                 Log.i("TAG", "showLocationDialog: isLocationEnabled else")
-                                enableLocationServices()
+                                location.enableLocationServices()
                                 getFreshLocation()
                             }
                         }else{
@@ -188,37 +226,21 @@ class HomeFragment : Fragment() {
 
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                if (isLocationEnabled()) {
+                if (location.isLocationEnabled()) {
                     getFreshLocation()
                 } else {
-                    enableLocationServices()
-                    getFreshLocation()
+                    location.enableLocationServices()
+                    if(location.isLocationEnabled()){getFreshLocation()}
                 }
             } else {
-                // Permission denied, show a message to the user
                 Toast.makeText(this.requireContext(), "Location permission denied", Toast.LENGTH_LONG).show()
             }
         }
     }
-    private fun checkPermissions(): Boolean {
-        Log.i("TAG", "checkPermissions: ")
-        return (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
-    private fun enableLocationServices(){
-        Log.i("TAG", "enableLocationServices: ")
-        Toast.makeText(this.requireContext(),"Turn on location",Toast.LENGTH_LONG).show()
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        startActivity(intent)
-    }
 
-    private fun isLocationEnabled():Boolean{
-        Log.i("TAG", "isLocationEnabled: ")
-        //old methode
-        val locationManager : LocationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
+
+
+
     @SuppressLint("MissingPermission")
     private fun getFreshLocation() {
         Log.i("TAG", "getFreshLocation: requesting location update")
