@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@drawable/rectangle">
+
+    <LinearLayout
+        android:id="@+id/btn_linear"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <Button
+            android:id="@+id/btnFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/basic"
+            android:textSize="20sp"
+            android:text="From"
+             />
+
+        <Button
+            android:id="@+id/btnTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="To"
+            android:textSize="20sp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/basic"
+             />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/from_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btn_linear"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/to_linear"
+        android:gravity="center"
+
+        >
+        <TextView
+            android:id="@+id/txtFrom_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="2:52 AM "
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+
+            />
+        <TextView
+            android:id="@+id/txtFrom_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="26 Feb, 2021"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+
+            />
+    </LinearLayout>
+    <!-- Display selected time and date -->
+
+
+    <LinearLayout
+        android:id="@+id/to_linear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/btn_linear"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/from_linear"
+        >
+        <TextView
+            android:id="@+id/txt_to_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="2:52 AM "
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+
+            />
+        <TextView
+            android:id="@+id/txt_to_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="26 Feb, 2021"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+
+            />
+    </LinearLayout>
+
+    <!-- Alarm/Notification selection -->
+    <RadioGroup
+        android:id="@+id/notf_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/from_linear"
+        >
+
+        <RadioButton
+            android:id="@+id/rbAlarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alarm"
+            android:textSize="20sp"
+             />
+
+        <RadioButton
+            android:id="@+id/rbNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification"
+            android:textSize="20sp"
+             />
+    </RadioGroup>
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="SAVE"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/basic"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/notf_type"
+         />
+</androidx.constraintlayout.widget.ConstraintLayout>
