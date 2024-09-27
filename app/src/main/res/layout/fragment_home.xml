@@ -35,6 +35,7 @@
                     android:text="19°"
                     android:textSize="56sp"
                     android:textColor="#FFFFFF"
+                    android:fontFamily="@font/regular_grund"
                     android:layout_marginTop="8dp"/>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,6 +54,8 @@
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textColor="#FFFFFF"
+                        android:fontFamily="@font/regular_grund"
+
                         />
                 </LinearLayout>
                 <TextView
@@ -61,7 +64,9 @@
                     android:layout_height="wrap_content"
                     android:text="Precipitations"
                     android:textSize="20sp"
-                    android:textColor="#FFFFFF"/>
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/regular_grund"
+                    />
 
                 <TextView
                     android:id="@+id/maxMinTemperature"
@@ -70,7 +75,9 @@
                     android:text="Max: 24°  Min: 18°"
                     android:textSize="18sp"
                     android:textColor="#FFFFFF"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/regular_grund"
+                    />
 
                 <ImageView
                     android:id="@+id/houseImage"
@@ -93,6 +100,7 @@
                         android:textColor="#FFFFFF"
                         android:layout_marginStart="15dp"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/regular_grund"
                         android:text="@string/today" />
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="370dp"
@@ -132,6 +140,8 @@
                         android:layout_marginTop="10dp"
                         android:text="@string/day_forcast"
                         android:textColor="#FFFFFF"
+                        android:fontFamily="@font/regular_grund"
+
                         android:textSize="20sp" />
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="370dp"
@@ -187,6 +197,8 @@
                             android:layout_weight="1"
                             android:textColor="@color/white"
                             android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/regular_grund"
+
                             />
                         <TextView
                             android:id="@+id/humidityValuetxt"
@@ -196,6 +208,7 @@
                             android:textColor="@color/white"
                             android:layout_marginEnd="15dp"
                             android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/regular_grund"
 
                             />
                     </LinearLayout>
@@ -224,6 +237,8 @@
                             android:text="@string/wind"
                             android:textSize="20sp"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
 
                             />
@@ -232,6 +247,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="20sp"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
                             android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
@@ -264,6 +281,8 @@
                             android:text="@string/cloud"
                             android:textSize="20sp"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
                             />
                         <TextView
@@ -273,6 +292,8 @@
                             android:textSize="20sp"
                             android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
                             />
                     </LinearLayout>
@@ -302,6 +323,8 @@
                             android:layout_weight="1"
                             android:text="@string/pressure"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
                             android:textSize="20sp" />
                         <TextView
@@ -311,6 +334,8 @@
                             android:textSize="20sp"
                             android:layout_marginEnd="15dp"
                             android:textColor="@color/white"
+                            android:fontFamily="@font/regular_grund"
+
                             android:layout_gravity="center_vertical"
                             />
                     </LinearLayout>
