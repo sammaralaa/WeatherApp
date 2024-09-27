@@ -3,8 +3,11 @@ package com.example.weatherproject.view.favorite
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentWeatherItemLayoutBinding
 import com.example.weatherproject.model.WeatherModel
 
@@ -21,7 +24,7 @@ class WeatherFavAdapter(var onFavClickListener: OnFavClickListener,var onRemoveF
           holder.binding.cardName.text = currentWeather.name
           holder.binding.cardLat.text = currentWeather.lat.toString()
           holder.binding.cardLon.text = currentWeather.lon.toString()
-          holder.binding.cardName.setOnClickListener{
+          holder.binding.card.setOnClickListener{
                 onFavClickListener.showWeather(currentWeather.lat,currentWeather.lon)
           }
         holder.binding.removeImg.setOnClickListener{

@@ -77,6 +77,7 @@ class HomeFragment : Fragment() {
     private lateinit var hourlyLayoutManager: LayoutManager
 
     lateinit var location : Gpslocation
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(

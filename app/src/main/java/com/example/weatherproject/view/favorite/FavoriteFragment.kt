@@ -89,7 +89,7 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
     }
 
     override fun showWeather(lat: Double, lon: Double) {
-
+            findNavController().navigate(R.id.action_favoriteFragment_to_favDetailsFragment)
     }
 
     override fun removeFromFav(weather: WeatherModel) {

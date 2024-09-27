@@ -7,8 +7,10 @@
     tools:context=".view.favorite.WeatherItemLayoutFragment">
 
    <androidx.cardview.widget.CardView
+       android:id="@+id/card"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
+       android:focusable="true"
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        android:clickable="true"
