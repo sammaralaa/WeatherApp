@@ -7,10 +7,8 @@ import com.google.gson.annotations.SerializedName
 data class WeatherModel(@PrimaryKey val name: String,
                          val  lat : Double,
                          val  lon : Double,
-                         val temp: Double,
-                         val pressure: Int,
-                         val humidity: Int,
-                         var description : String,
+                         val lang : String,
+                         var unite : String,
     )
 
 data class Clouds(var all : Int)

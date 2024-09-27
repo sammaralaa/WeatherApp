@@ -3,14 +3,10 @@ package com.example.weatherproject.view_model.home
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherproject.model.WeatherRepository
@@ -24,7 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
@@ -38,9 +33,6 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
 
     private val _weatherDailyStateFlow = MutableStateFlow<ApiStateForcast>(ApiStateForcast.Loading)
     val weatherDaileStateFlow: StateFlow<ApiStateForcast> = _weatherDailyStateFlow
-
-     var w :WeatherResponse? = null
-    var wind : Wind? = null
 
     fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
            viewModelScope.launch {

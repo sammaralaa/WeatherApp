@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherRepository
@@ -29,11 +30,18 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
             }
         }
     }
-    fun insertWeather(lat: Double, lon: Double,lang : String,unit:String){
+    fun insertWeather(lat: Double, lon: Double,name : String){
         viewModelScope.launch(Dispatchers.IO){
-//            var w = repository.getCurrentWeather(lat,lon,lang,unit)
-//            var wm = WeatherModel(w?.name?:"",w?.coord?.lat?:0.0,w?.coord?.lon?:0.0,w?.main?.temp?:0.0,w?.main?.pressure?:0,w?.main?.humidity?:0,w?.weather?.get(0)?.description?:"")
-//            repository.insertWeather(wm)
+            val formattedNumber = String.format("%.2f", lat) // Formats to 2 decimal places
+            val lat = formattedNumber.toDouble()
+
+            val formattedNumber2 = String.format("%.2f", lon) // Formats to 2 decimal places
+            val lon = formattedNumber2.toDouble()
+
+            var lang = repository.getStringFromSharedPref("lang")
+            var unite = repository.getStringFromSharedPref("unite")
+            var wm = WeatherModel(name,lat,lon,lang?:"", unite?:"")
+            repository.insertWeather(wm)
             getAllLocalWeather()
         }
     }
@@ -43,4 +51,5 @@ class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
             getAllLocalWeather()
         }
     }
+
 }

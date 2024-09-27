@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -50,7 +51,7 @@ class NewMapFragment : Fragment() {
     private lateinit var autoCompleteTextView: AutoCompleteTextView
     private lateinit var viewModel: FavFragmentViewModel
     private lateinit var favFactory: FavFragmentViewModelFactory
-
+    lateinit var geocoder: Geocoder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNewMapBinding.inflate(inflater, container, false)
@@ -68,7 +69,7 @@ class NewMapFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize osmdroid configuration
         Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
-
+        geocoder = Geocoder(requireContext())
         // Initialize the MapView
         mapView = binding.newMap // Access the map view using view binding
         mapView.setMultiTouchControls(true)
@@ -217,7 +218,7 @@ class NewMapFragment : Fragment() {
     private fun fetchLocationSuggestions(query: String, callback: (List<String>) -> Unit) {
         GlobalScope.launch {
             try {
-                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=10"
+                val url = "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5"
                 val response = URL(url).readText()
                 val jsonArray = JSONArray(response)
 
@@ -265,7 +266,8 @@ class NewMapFragment : Fragment() {
     }
 
     private fun addToFav(p: GeoPoint){
-        viewModel.insertWeather(p.latitude,p.longitude,"en","metric")
+       var name =  geocoder.getFromLocation(p.latitude,p.longitude,5)?.get(0)?.subAdminArea
+        viewModel.insertWeather(p.latitude,p.longitude,name?:"")
     }
 
 }

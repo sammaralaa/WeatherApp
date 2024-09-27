@@ -87,11 +87,21 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
         updateConfig()
         location = Gpslocation(requireContext())
+        geoCoder = Geocoder(requireContext())
         if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
             updateConfig()
             if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
                 var lon =  viewModel.getDataFromSharedPref().first
                 var lat =  viewModel.getDataFromSharedPref().second
+
+                    var name =  geoCoder.getFromLocation(lat,lon,5)?.get(0)
+                    Log.i("TAG", "onLocationResult: adminArea = ${ name?.adminArea}")
+                    Log.i("TAG", "onLocationResult: subAdminArea = ${ name?.subAdminArea}")
+                    Log.i("TAG", "onLocationResult: countryName = ${ name?.countryName}")
+                    Log.i("TAG", "onLocationResult: locale = ${ name?.locale}")
+                    Log.i("TAG", "onLocationResult: locality = ${ name?.locality}")
+
+
                 updateConfig()
                 getCurrentWeather(lat,lon,lang,unite)
                 getForcastWeather(lat,lon,lang,unite)
@@ -138,6 +148,7 @@ class HomeFragment : Fragment() {
             adapter=hourlyAdapter
             layoutManager=hourlyLayoutManager
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -288,6 +299,7 @@ class HomeFragment : Fragment() {
             updateConfig()
             viewModel.getCurrentWeather(lat,lon,lang,unit)
             Log.i("TAG", "getCurrentWeather: frament ")
+
             viewModel.weatherStateFlow.collectLatest { state ->
                 when (state) {
                     is ApiState.Loading -> {

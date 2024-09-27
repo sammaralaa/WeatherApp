@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.weatherproject.model.WeatherModel
 
-@Database(entities = arrayOf(WeatherModel::class), version = 1)
+@Database(entities = arrayOf(WeatherModel::class), version = 2)
 abstract class WeatherDataBase : RoomDatabase() {
         abstract fun getWeatherDao(): WeatherDao
         companion object{
@@ -17,7 +17,8 @@ abstract class WeatherDataBase : RoomDatabase() {
                     val instance = Room.databaseBuilder(
                         context.applicationContext, WeatherDataBase::class.java,
                         "weather_database"
-                    ).build()
+                    ).fallbackToDestructiveMigration()
+                        .build()
                     Instance =instance
 
                     instance

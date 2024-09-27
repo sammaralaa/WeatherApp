@@ -81,7 +81,11 @@ class SettingsFragment : Fragment() {
                 SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
-
+        var locMethode = viewModel.getStringFromSharedPref("location")
+        if(locMethode == "map")
+            mapButton.isChecked = true
+        else if(locMethode == "gps")
+            gpsButton.isChecked = true
         locatioGroup.setOnCheckedChangeListener{group, checkedId ->
             if(mapButton.id == checkedId){
                 viewModel.saveData("location","map")

@@ -1,6 +1,7 @@
 package com.example.weatherproject.view.favorite
 
 import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -38,6 +39,7 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
     lateinit var favFactory : FavFragmentViewModelFactory
     lateinit var favAdapter: WeatherFavAdapter
     private lateinit var mLayoutManager: GridLayoutManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -52,6 +54,7 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         super.onViewCreated(view, savedInstanceState)
         fab = binding.fab
         recyclerView = binding.favRecycler
+
         fab.setOnClickListener {
            findNavController().navigate(R.id.action_favoriteFragment_to_newMapFragment)
         }
