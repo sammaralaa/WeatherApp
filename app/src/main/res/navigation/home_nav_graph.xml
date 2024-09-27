@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_favoriteFragment_to_newMapFragment"
             app:destination="@id/newMapFragment" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_favDetailsFragment"
+            app:destination="@id/favDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -60,4 +63,9 @@
             android:id="@+id/action_newMapFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/favDetailsFragment"
+        android:name="com.example.weatherproject.FavDetailsFragment"
+        android:label="fragment_fav_details"
+        tools:layout="@layout/fragment_fav_details" />
 </navigation>
