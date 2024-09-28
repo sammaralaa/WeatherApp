@@ -1,9 +1,12 @@
 package com.example.weatherproject.view
 
 import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -16,97 +19,125 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
 import com.example.weatherproject.WeatherAlertReceiver
+import com.example.weatherproject.databinding.FragmentAlertsBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class AlertsFragment : Fragment() {
     private lateinit var alarmManager: AlarmManager
     private lateinit var pendingIntent: PendingIntent
+    lateinit var binding: FragmentAlertsBinding
+    private lateinit var btnFrom: Button
+    private lateinit var btnTo: Button
+    private lateinit var txtFromDate: TextView
+    private lateinit var txtFromTime: TextView
+    private lateinit var txtToDate: TextView
+    private lateinit var txtToTime: TextView
+    private lateinit var btnSave: Button
+    private lateinit var rbAlarm: RadioButton
+    private lateinit var rbNotification: RadioButton
+
+    private var fromCalendar = Calendar.getInstance()
+    private var toCalendar = Calendar.getInstance()
+
+    lateinit var fab : FloatingActionButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_alerts, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding= FragmentAlertsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        fab = binding.fab
+        fab.setOnClickListener {
+           showCustomDialog()
+        }
+    }
+    private fun showCustomDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.alarm_custom_dialog, null)
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        dialogBuilder.setView(dialogView)
 
-        val btnSetAlert = view.findViewById<Button>(R.id.btnSetWeatherAlert)
-        val btnStopAlert = view.findViewById<Button>(R.id.btnStopAlert)
-        val etDuration = view.findViewById<EditText>(R.id.etDuration)
-        val radioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        val dialog = dialogBuilder.create()
+        dialog.show()
 
-        btnSetAlert.setOnClickListener {
-            val duration = etDuration.text.toString().toLongOrNull() ?: 0L
-            val selectedType = when (radioGroup.checkedRadioButtonId) {
-                R.id.rbNotification -> "NOTIFICATION"
-                R.id.rbAlarmSound -> "ALARM"
-                else -> "NOTIFICATION"
-            }
-            setWeatherAlert(duration, selectedType)
+        btnFrom = dialogView.findViewById(R.id.btnFrom)
+        btnTo = dialogView.findViewById(R.id.btnTo)
+        txtFromDate = dialogView.findViewById(R.id.txtFrom_date)
+        txtFromTime = dialogView.findViewById(R.id.txtFrom_time)
+        txtToDate = dialogView.findViewById(R.id.txt_to_date)
+        txtToTime = dialogView.findViewById(R.id.txt_to_time)
+        btnSave = dialogView.findViewById(R.id.btnSave)
+        rbAlarm = dialogView.findViewById(R.id.rbAlarm)
+        rbNotification = dialogView.findViewById(R.id.rbNotification)
+
+
+        // Date and Time pickers for 'From'
+        btnFrom.setOnClickListener {
+            pickDateTime(fromCalendar) { updateText(txtFromDate,txtFromTime, fromCalendar) }
         }
 
-        btnStopAlert.setOnClickListener {
-            cancelWeatherAlert()
-            stopAlarm(requireContext())
+        // Date and Time pickers for 'To'
+        btnTo.setOnClickListener {
+            pickDateTime(toCalendar) { updateText(txtToDate,txtToTime, toCalendar) }
+        }
+
+        // Save button click listener
+        btnSave.setOnClickListener {
+            val isAlarmSelected = rbAlarm.isChecked
+            val isNotificationSelected = rbNotification.isChecked
+            // Handle saving logic here
+
+            dialog.dismiss() // Close dialog after saving
         }
     }
 
-    private fun setWeatherAlert(duration: Long, alertType: String) {
-        // Intent to BroadcastReceiver
-        val intent = Intent(requireContext(), WeatherAlertReceiver::class.java).apply {
-            putExtra("ALERT_TYPE", alertType)
-        }
+    private fun pickDateTime(calendar: Calendar, onDateTimeSet: () -> Unit) {
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
 
-        pendingIntent = PendingIntent.getBroadcast(
-            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        // Time picker
+        TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+            calendar.set(Calendar.MINUTE, minute)
 
-        // Schedule the alarm
-        val triggerTime = SystemClock.elapsedRealtime() + duration * 60 * 1000 // Duration in minutes
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerTime, pendingIntent)
+            // Date picker
+            DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-        Toast.makeText(requireContext(), "Weather alert set", Toast.LENGTH_SHORT).show()
+                onDateTimeSet()
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }, currentHour, currentMinute, false).show()
     }
 
-    private fun cancelWeatherAlert() {
-        if (::pendingIntent.isInitialized) {
-            alarmManager.cancel(pendingIntent)
-            Toast.makeText(requireContext(), "Weather alert canceled", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Weather Alerts"
-            val descriptionText = "Channel for weather alerts"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("weather_alert_channel", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-    private fun stopAlarm(context: Context?) {
-        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        val ringtone = RingtoneManager.getRingtone(context, alarmSound)
-        if (ringtone.isPlaying) {
-            ringtone.stop()
-        }
+    private fun updateText(textViewDate: TextView,textViewTime: TextView ,calendar: Calendar) {
+        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+
+        textViewTime.text = timeFormat.format(calendar.time)
+        textViewDate.text = dateFormat.format(calendar.time)
+
     }
 }
 

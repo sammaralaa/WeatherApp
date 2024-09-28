@@ -1,5 +1,7 @@
 package com.example.weatherproject.view.favorite
 
+import com.example.weatherproject.model.WeatherModel
+
 interface OnFavClickListener {
-    fun showWeather(lat : Double,lon : Double)
+    fun showWeather(weatherModel: WeatherModel)
 }

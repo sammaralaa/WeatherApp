@@ -17,7 +17,7 @@ import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentSettingsBinding
 import com.example.weatherproject.db.WeatherDataBase
 import com.example.weatherproject.model.local.WeatherLocalDataSource
-import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
@@ -33,6 +33,7 @@ class SettingsFragment : Fragment() {
     lateinit var languageGroup : RadioGroup
     lateinit var tempGroup : RadioGroup
     lateinit var windGroup : RadioGroup
+    lateinit var notifGroup: RadioGroup
 
     lateinit var gpsButton : RadioButton
     lateinit var mapButton : RadioButton
@@ -43,6 +44,8 @@ class SettingsFragment : Fragment() {
     lateinit var fahrenButton : RadioButton
     lateinit var msButton : RadioButton
     lateinit var mhButton : RadioButton
+    lateinit var enableButton : RadioButton
+    lateinit var disableButton : RadioButton
 
     private lateinit var viewModel: HomeFragmentViewModel
     private lateinit var allFactory: HomeFragmentViewModelFactory
@@ -65,6 +68,7 @@ class SettingsFragment : Fragment() {
         languageGroup = binding.languageRadioGroup
         tempGroup = binding.tempRadioGroup
         windGroup = binding.windRadioGroup
+        notifGroup = binding.notificRadioGroup
 
         gpsButton = binding.gpsRadioButton
         mapButton = binding.mapRadioButton
@@ -75,6 +79,9 @@ class SettingsFragment : Fragment() {
         celsiusButton = binding.celsiusRadioButton
         msButton = binding.msRadioButton
         mhButton = binding.mhRadioButton
+        enableButton = binding.enableRadioButton
+        disableButton = binding.disapleRadioButton
+
         allFactory = HomeFragmentViewModelFactory(
             WeatherRepository.getInstance(
                 WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
@@ -86,6 +93,37 @@ class SettingsFragment : Fragment() {
             mapButton.isChecked = true
         else if(locMethode == "gps")
             gpsButton.isChecked = true
+
+        val n = viewModel.getStringFromSharedPref("notification")
+        when(n){
+            "true"-> enableButton.isChecked=true
+            "false"->disableButton.isChecked=true
+        }
+
+        val currentLanguage = Locale.getDefault().language
+        val currentCountry = Locale.getDefault().country
+        Log.i("TAG", "Current language: $currentLanguage, Current country: $currentCountry")
+        if(currentLanguage=="en"){
+            englishButton.isChecked = true
+        }else{
+            arabicButton.isChecked = true
+        }
+
+        val u = viewModel.getStringFromSharedPref("units")
+        when(u){
+            "metric"->{msButton.isChecked=true
+                celsiusButton.isChecked=true
+            }
+            "standard"->{
+                msButton.isChecked=true
+                kelvinButton.isChecked=true
+            }
+            "imperial"->{
+                mhButton.isChecked = true
+                fahrenButton.isChecked=true
+            }
+        }
+
         locatioGroup.setOnCheckedChangeListener{group, checkedId ->
             if(mapButton.id == checkedId){
                 viewModel.saveData("location","map")
@@ -98,14 +136,6 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        val currentLanguage = Locale.getDefault().language
-        val currentCountry = Locale.getDefault().country
-        Log.i("TAG", "Current language: $currentLanguage, Current country: $currentCountry")
-        if(currentLanguage=="en"){
-            englishButton.isChecked = true
-        }else{
-            arabicButton.isChecked = true
-        }
         languageGroup.setOnCheckedChangeListener{group, checkedId ->
             var u = utilitis()
             if(arabicButton.id == checkedId){
@@ -142,6 +172,14 @@ class SettingsFragment : Fragment() {
             }else if(mhButton.id == checkedId){
                 fahrenButton.isChecked=true
                 viewModel.saveData("units","imperial")
+            }
+        }
+
+        notifGroup.setOnCheckedChangeListener{group , checkedID->
+            if(enableButton.id == checkedID){
+                viewModel.saveData("notification","true")
+            }else if(disableButton.id==checkedID){
+                viewModel.saveData("notification","false")
             }
         }
     }
