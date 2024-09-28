@@ -3,14 +3,17 @@ package com.example.weatherproject.model.repo
 import com.example.weatherproject.model.WeatherForcastModel
 import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherResponse
+import com.example.weatherproject.model.local.IWeatherLocalDataSource
 import com.example.weatherproject.model.local.WeatherLocalDataSource
+import com.example.weatherproject.model.shared_preferences.ISharedDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
+import com.example.weatherproject.network.remote.IWeatherRemoteDataSource
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
 
 
-class WeatherRepository(private var remoteDataSource: WeatherRemoteDataSource, private var localDataAource: WeatherLocalDataSource, private  var sharedDataSource: SharedDataSource) :
+class WeatherRepository(private var remoteDataSource: IWeatherRemoteDataSource, private var localDataAource: IWeatherLocalDataSource, private  var sharedDataSource: ISharedDataSource) :
     IWeatherRepository {
 
     companion object{

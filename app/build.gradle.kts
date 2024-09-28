@@ -115,12 +115,15 @@ dependencies {
     // hamcrest
     testImplementation ("org.hamcrest:hamcrest:2.2")
     testImplementation ("org.hamcrest:hamcrest-library:2.2")
-    androidTestImplementation ("org.hamcrest:hamcrest:2.2")
-    androidTestImplementation ("org.hamcrest:hamcrest-library:2.2")
+    androidTestImplementation ("org.hamcrest:hamcrest:1.3")
+    androidTestImplementation ("org.hamcrest:hamcrest-library:1.3")
 
     // Dependencies for local unit tests
     testImplementation ("junit:junit:4.13.2")
     testImplementation ("org.hamcrest:hamcrest-all:1.3")
     testImplementation ("androidx.arch.core:core-testing:2.1.0")
     testImplementation ("org.robolectric:robolectric:4.5.1")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+
 }

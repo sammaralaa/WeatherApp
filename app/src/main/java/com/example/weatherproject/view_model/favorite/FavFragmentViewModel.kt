@@ -11,6 +11,7 @@ import com.example.weatherproject.areSameDay
 import com.example.weatherproject.getCurrentDateTime
 import com.example.weatherproject.isMidnight
 import com.example.weatherproject.model.WeatherModel
+import com.example.weatherproject.model.repo.IWeatherRepository
 import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.network.ApiState
 import com.example.weatherproject.network.ApiStateForcast
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FavFragmentViewModel(var repository: WeatherRepository) : ViewModel(){
+class FavFragmentViewModel(var repository: IWeatherRepository) : ViewModel(){
 
     private var _weather : MutableLiveData<List<WeatherModel>> = MutableLiveData<List<WeatherModel>>()
     val weather  : LiveData<List<WeatherModel>> = _weather

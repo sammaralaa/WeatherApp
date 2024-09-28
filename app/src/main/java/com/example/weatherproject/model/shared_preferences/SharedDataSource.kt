@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 
-class SharedDataSource(override var sharedPreference: SharedPreferences) : ISharedDataSource {
+class SharedDataSource( var sharedPreference: SharedPreferences) : ISharedDataSource {
 
     override fun getStringFromSharedPref(key : String) : String?{
         return sharedPreference.getString(key,"")

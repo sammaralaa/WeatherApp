@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherproject.areSameDay
 import com.example.weatherproject.getCurrentDateTime
 import com.example.weatherproject.isMidnight
+import com.example.weatherproject.model.repo.IWeatherRepository
 import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.network.ApiState
 import com.example.weatherproject.network.ApiStateForcast
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
+class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel() {
 //    private val _weather = MutableLiveData<WeatherResponse?>()
 //    val weather: LiveData<WeatherResponse?> = _weather
     private val _weatherStateFlow = MutableStateFlow<ApiState>(ApiState.Loading)
