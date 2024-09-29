@@ -50,6 +50,19 @@ class AlertsViewModel (var repository: IWeatherRepository) : ViewModel(){
             getAllAlerts()
         }
     }
+    fun deleteAlertByWorkId(alert: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAlertByWorkId(alert)
+            getAllAlerts()
+        }
+    }
+    fun deleteAlertById(alert: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAlertById(alert)
+            getAllAlerts()
+        }
+    }
+
     fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
         viewModelScope.launch {
             repository.getCurrentWeather(lat,lon,lang,unit)

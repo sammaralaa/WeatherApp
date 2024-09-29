@@ -58,6 +58,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 
@@ -106,7 +107,7 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
                 WeatherRemoteDataSource(RetrofitHelper.service),
                 WeatherLocalDataSource(
                     WeatherDataBase.getInstance(requireContext()).getWeatherDao(),
-                    WeatherDataBase.getInstance(requireContext()).getAlertDao()),
+                    WeatherDataBase.getInstance(requireContext()).getAlertDao(),WeatherDataBase.getInstance(requireContext()).getOfflineDao()),
                 SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         AViewModel = ViewModelProvider(this, AFactory).get(AlertsViewModel::class.java)
@@ -223,7 +224,8 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
     }
 
     override fun removeAlert(alert: AlarmData) {
-        AViewModel.deleteAlert(alert)
+        cancelNotification(requireContext(), alert.workerId)
+        AViewModel.deleteAlertByWorkId(alert.workerId)
         alertAdapter.notifyDataSetChanged()
     }
 
@@ -233,7 +235,7 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
         val delay = alarmTime - currentTime
 
         val data = Data.Builder() // to pass data to worker
-            .putString("id",alarm.workerId) //need fix
+            .putInt("id",alarm.id) //need fix
             .putString("message", alarm.message)
             .putString("type", alarm.type)
             .build()
@@ -300,6 +302,14 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
     private fun requestOverlayPermission() {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${requireContext().packageName}"))
         startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSION)
+    }
+
+    fun cancelNotification(context: Context, workRequestId: String) {
+        val workManager = WorkManager.getInstance(context)
+
+        val id = UUID.fromString(workRequestId)
+
+        workManager.cancelWorkById(id)
     }
 }
 

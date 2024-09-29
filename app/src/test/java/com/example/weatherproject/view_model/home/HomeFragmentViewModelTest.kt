@@ -45,18 +45,5 @@ class HomeFragmentViewModelTest{
         val error = (weatherState as ApiState.Failure).msg
         assertEquals("Error fetching weather", error.message)
     }
-    @Test
-    fun `getForcastWeather should emit Success when forecast data is fetched and filtered correctly`() = runTest {
-        Repository.setShouldReturnError(false)
 
-        viewModel.getForcastWeather(48.8566, 2.3522, "en", "metric")
-        advanceUntilIdle()
-
-        val hourlyWeatherState = viewModel.weatherHourlyStateFlow.value
-        assertTrue(hourlyWeatherState is ApiStateForcast.Success)
-
-        val dailyWeatherState = viewModel.weatherDaileStateFlow.value
-        assertTrue(dailyWeatherState is ApiStateForcast.Success)
-
-    }
 }

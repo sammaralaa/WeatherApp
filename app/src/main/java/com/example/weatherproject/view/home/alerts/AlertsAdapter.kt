@@ -9,12 +9,15 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherproject.databinding.FragmentAlertItemBinding
-import com.example.weatherproject.databinding.FragmentAlertsBinding
 import com.example.weatherproject.model.AlarmData
-import com.example.weatherproject.view.home.daily_forcast.ForcastDiffutil
+import java.text.SimpleDateFormat
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 class AlertsAdapter(var onRemoveAlertListener: OnRemoveAlertListener) : ListAdapter<AlarmData, AlertsAdapter.ViewHolder>(
     AlertsDiffutil()
@@ -30,7 +33,7 @@ class AlertsAdapter(var onRemoveAlertListener: OnRemoveAlertListener) : ListAdap
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentWeather = getItem(position)
-        holder.binding.alertName.text = "${currentWeather.date}  ${currentWeather.time}"
+        holder.binding.alertName.text = formatTime(currentWeather.date)
 
         holder.binding.removeImg.setOnClickListener{
             onRemoveAlertListener.removeAlert(currentWeather)
@@ -43,7 +46,18 @@ class AlertsAdapter(var onRemoveAlertListener: OnRemoveAlertListener) : ListAdap
         val dayOfWeek: DayOfWeek = dateTime.dayOfWeek
         return dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() }.substring(0,3)
     }
-
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertUnixTimestampToDateTime(unixTime: Long): String {
+        val instant = Instant.ofEpochSecond(unixTime)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            .withZone(ZoneId.systemDefault())
+        return formatter.format(instant)
+    }
     class ViewHolder(var binding: FragmentAlertItemBinding): RecyclerView.ViewHolder(binding.root){
+    }
+
+    private fun formatTime(calendar: Long): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault())
+        return sdf.format(calendar)
     }
 }

@@ -1,6 +1,7 @@
 package com.example.weatherproject.model.repo
 
 import com.example.weatherproject.model.AlarmData
+import com.example.weatherproject.model.OfflineWeather
 import com.example.weatherproject.model.WeatherForcastModel
 import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherResponse
@@ -27,4 +28,7 @@ interface IWeatherRepository {
     suspend fun inserAlerts(alert: AlarmData)
     suspend fun deleteAlert(alert: AlarmData)
     suspend fun deleteAlertById(alertId: String?)
+    suspend fun deleteAlertByWorkId(alertId: String?)
+    suspend fun getOfflineWeathers(): Flow<List<OfflineWeather>>
+    suspend fun insertOffline(weather: OfflineWeather)
 }

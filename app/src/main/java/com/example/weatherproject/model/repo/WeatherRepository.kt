@@ -2,6 +2,7 @@ package com.example.weatherproject.model.repo
 
 import android.util.Log
 import com.example.weatherproject.model.AlarmData
+import com.example.weatherproject.model.OfflineWeather
 import com.example.weatherproject.model.WeatherForcastModel
 import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherResponse
@@ -86,5 +87,14 @@ class WeatherRepository(private var remoteDataSource: IWeatherRemoteDataSource, 
 
     override suspend fun deleteAlertById(alertId: String?) {
         localDataAource.deleteAlertById(alertId)
+    }
+    override suspend fun deleteAlertByWorkId(alertId: String?) {
+        localDataAource.deleteAlertByWorkId(alertId)
+    }
+    override suspend fun getOfflineWeathers() : Flow<List<OfflineWeather>>{
+        return localDataAource.getAllOffline()
+    }
+    override suspend fun insertOffline(weather: OfflineWeather){
+        localDataAource.inserOffline(weather)
     }
 }

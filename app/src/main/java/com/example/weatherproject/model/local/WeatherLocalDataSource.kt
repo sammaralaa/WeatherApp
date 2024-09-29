@@ -2,12 +2,14 @@ package com.example.weatherproject.model.local
 
 import android.util.Log
 import com.example.weatherproject.db.AlertDao
+import com.example.weatherproject.db.OfflineDao
 import com.example.weatherproject.db.WeatherDao
 import com.example.weatherproject.model.AlarmData
+import com.example.weatherproject.model.OfflineWeather
 import com.example.weatherproject.model.WeatherModel
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalDataSource(private var dao : WeatherDao,private var alertDao : AlertDao) : IWeatherLocalDataSource {
+class WeatherLocalDataSource(private var dao : WeatherDao,private var alertDao : AlertDao,private var offlineDao : OfflineDao) : IWeatherLocalDataSource {
 
     override suspend fun getAllWeathers() : Flow<List<WeatherModel>>{
         return dao.getAll()
@@ -36,5 +38,13 @@ class WeatherLocalDataSource(private var dao : WeatherDao,private var alertDao :
         alertDao.deleteAlert(alert)
     }
 
-
+    override suspend fun deleteAlertByWorkId(alertId: String?) {
+        alertDao.deleteAlertByWorkerId(alertId)
+    }
+    override suspend fun getAllOffline() : Flow<List<OfflineWeather>>{
+        return offlineDao.getAllOffData()
+    }
+    override suspend fun inserOffline(data: OfflineWeather){
+        var l = offlineDao.insertAlert(data)
+    }
 }

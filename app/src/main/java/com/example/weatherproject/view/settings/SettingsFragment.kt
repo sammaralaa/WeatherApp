@@ -84,7 +84,7 @@ class SettingsFragment : Fragment() {
 
         allFactory = HomeFragmentViewModelFactory(
             WeatherRepository.getInstance(
-                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao(),WeatherDataBase.getInstance(requireContext()).getAlertDao()),
+                WeatherRemoteDataSource(RetrofitHelper.service), WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao(),WeatherDataBase.getInstance(requireContext()).getAlertDao(),WeatherDataBase.getInstance(requireContext()).getOfflineDao()),
                 SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)

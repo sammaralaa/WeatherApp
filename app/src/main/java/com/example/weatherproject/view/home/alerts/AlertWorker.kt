@@ -40,15 +40,15 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
                 WeatherRepository.getInstance(
                     WeatherRemoteDataSource(RetrofitHelper.service),
                     WeatherLocalDataSource(WeatherDataBase.getInstance(applicationContext).getWeatherDao(),
-                        WeatherDataBase.getInstance(applicationContext).getAlertDao()),
+                        WeatherDataBase.getInstance(applicationContext).getAlertDao(),WeatherDataBase.getInstance(applicationContext).getOfflineDao()),
                     SharedDataSource(applicationContext.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)))
 
 
-            val id  = inputData.getString("id")
+            val id  = inputData.getInt("id",0)
             message = inputData.getString("message").toString()
             val type = inputData.getString("type")
             sendNotification(message,type)
-            repository.deleteAlertById(id)
+            repository.deleteAlertById(id.toString())
             Result.success()
         } catch (e: Exception) {
             Result.failure()

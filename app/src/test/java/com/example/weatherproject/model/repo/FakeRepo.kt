@@ -1,8 +1,10 @@
 package com.example.weatherproject.model.repo
 
+import com.example.weatherproject.model.AlarmData
 import com.example.weatherproject.model.Clouds
 import com.example.weatherproject.model.Coord
 import com.example.weatherproject.model.Main
+import com.example.weatherproject.model.OfflineWeather
 import com.example.weatherproject.model.Rain
 import com.example.weatherproject.model.Sys
 import com.example.weatherproject.model.Weather
@@ -20,6 +22,8 @@ import kotlinx.coroutines.flow.flowOf
 class FakeRepo () : IWeatherRepository {
     private val weatherData = mutableListOf<WeatherModel>()
     private var shouldReturnError = false
+
+    private var alarmData = mutableListOf<AlarmData>()
 
 
     val coord = Coord(lon = 56.78, lat = 12.34)
@@ -114,6 +118,37 @@ class FakeRepo () : IWeatherRepository {
     }
 
     override fun addSelected() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllAlerts(): Flow<List<AlarmData>> {
+        if(alarmData == null){
+            alarmData = mutableListOf()
+        }
+        return flowOf( alarmData)
+    }
+
+    override suspend fun inserAlerts(alert: AlarmData) {
+        alarmData.add(alert)
+    }
+
+    override suspend fun deleteAlert(alert: AlarmData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAlertById(alertId: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteAlertByWorkId(alertId: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getOfflineWeathers(): Flow<List<OfflineWeather>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun insertOffline(weather: OfflineWeather) {
         TODO("Not yet implemented")
     }
 }

@@ -7,11 +7,18 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherproject.areSameDay
 import com.example.weatherproject.getCurrentDateTime
 import com.example.weatherproject.isMidnight
+import com.example.weatherproject.model.OfflineWeather
+import com.example.weatherproject.model.WeatherForcastResponse
+import com.example.weatherproject.model.WeatherModel
+import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.repo.IWeatherRepository
 import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.network.ApiState
@@ -22,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel() {
 //    private val _weather = MutableLiveData<WeatherResponse?>()
@@ -34,6 +42,9 @@ class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel()
 
     private val _weatherDailyStateFlow = MutableStateFlow<ApiStateForcast>(ApiStateForcast.Loading)
     val weatherDaileStateFlow: StateFlow<ApiStateForcast> = _weatherDailyStateFlow
+
+    private var _OfflineWeather : MutableLiveData<List<OfflineWeather>> = MutableLiveData<List<OfflineWeather>>()
+    val offlineWeather  : LiveData<List<OfflineWeather>> = _OfflineWeather
 
     fun getCurrentWeather(lat: Double, lon: Double,lang : String,unit:String) {
            viewModelScope.launch {
@@ -103,4 +114,18 @@ class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel()
         repo.removeFromSharedPref(key)
     }
 
+    fun insertOfflieneWeather(weather: OfflineWeather){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.insertOffline(weather)
+        }
+    }
+    fun getAllOfflineWeather(){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.getOfflineWeathers().collect{weathers->
+                withContext(Dispatchers.Main){
+                    _OfflineWeather.postValue(weathers)
+                }
+            }
+        }
+    }
 }

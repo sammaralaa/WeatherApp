@@ -72,3 +72,31 @@ data class AlarmData(
     var message : String,
     var workerId : String
 )
+
+@Entity(tableName = "offline_data")
+data class OfflineWeather(
+    @PrimaryKey var id:Int,
+    var description : String,
+    var temp: Double,
+    var pressure: Int,
+    var humidity: Int,
+    var name: String,
+    var speed : Double,
+    var all : Int,
+    //days
+    var dt_txt1: String,
+    var tempD1: Double,
+    var iconD1: String,
+    var dt_txt2: String,
+    var tempD2: Double,
+    var iconD2: String,
+    var dt_txt3: String,
+    var tempD3: Double,
+    var iconD3: String,
+    var dt_txt4: String,
+    var tempD4: Double,
+    var iconD4: String,
+    var dt_txt5: String,
+    var tempD5: Double,
+    var iconD5: String,
+)

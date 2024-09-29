@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,8 @@ import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentHomeBinding
 import com.example.weatherproject.db.WeatherDataBase
 import com.example.weatherproject.getCurrentDateTime
+import com.example.weatherproject.isWifiConnected
+import com.example.weatherproject.model.OfflineWeather
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
@@ -51,6 +54,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 class HomeFragment : Fragment() {
     var lattitudeValue : Double = 0.0
@@ -78,6 +82,8 @@ class HomeFragment : Fragment() {
     private lateinit var hourlyBar : ProgressBar
     private lateinit var homeBar : ProgressBar
 
+    lateinit var offlineData : OfflineWeather
+
     lateinit var location : Gpslocation
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,36 +91,15 @@ class HomeFragment : Fragment() {
         allFactory = HomeFragmentViewModelFactory(
             WeatherRepository.getInstance(
             WeatherRemoteDataSource(RetrofitHelper.service),
-            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao(),WeatherDataBase.getInstance(requireContext()).getAlertDao()),
+            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao(),WeatherDataBase.getInstance(requireContext()).getAlertDao(),WeatherDataBase.getInstance(requireContext()).getOfflineDao()),
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
         ))
         viewModel = ViewModelProvider(this, allFactory).get(HomeFragmentViewModel::class.java)
         updateConfig()
         location = Gpslocation(requireContext())
         geoCoder = Geocoder(requireContext())
-//        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
-//            updateConfig()
-//            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
-//                var lon =  viewModel.getDataFromSharedPref().first
-//                var lat =  viewModel.getDataFromSharedPref().second
-//
-//                    var name =  geoCoder.getFromLocation(lat,lon,5)?.get(0)
-////                    Log.i("TAG", "onLocationResult: adminArea = ${ name?.adminArea}")
-////                    Log.i("TAG", "onLocationResult: subAdminArea = ${ name?.subAdminArea}")
-////                    Log.i("TAG", "onLocationResult: countryName = ${ name?.countryName}")
-////                    Log.i("TAG", "onLocationResult: locale = ${ name?.locale}")
-////                    Log.i("TAG", "onLocationResult: locality = ${ name?.locality}")
-//
-//
-//                updateConfig()
-//                getCurrentWeather(lat,lon,lang,unite)
-//                getForcastWeather(lat,lon,lang,unite)
-//            }
-//
-//        }else{
-//            viewModel.addSelected(requireActivity())
-//            showLocationDialog()
-//        }
+         offlineData = OfflineWeather(1,"",0.0,5,1,"",0.0,11,"",0.0,"","",0.0,"","",0.0,"",
+            "",0.0,"","",0.0,"")
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -168,25 +153,43 @@ class HomeFragment : Fragment() {
                var lon =  viewModel.getDataFromSharedPref().first
                var lat =  viewModel.getDataFromSharedPref().second
                 updateConfig()
+                if(isWifiConnected(requireContext())){
                 getCurrentWeather(lat,lon,lang,unite)
                 getForcastWeather(lat,lon,lang,unite)
+                    binding.dailyLinear.visibility = View.VISIBLE
+                    binding.hourlyLinear.visibility = View.VISIBLE
+                }else{
+                    binding.dailyLinear.visibility = View.GONE
+                    binding.hourlyLinear.visibility = View.GONE
+                    viewModel.getAllOfflineWeather()
+                    viewModel.offlineWeather.observe(viewLifecycleOwner , Observer { weather ->
+                        Log.i("TAG", "onStart: $weather")
+                        UpdateUiFromOffline(weather.get(0))
+                    })
+                }
             }else{
                 if(location.checkPermissions()){
-                    Log.i("TAG", "showLocationDialog: checkPermissions")
                     if(location.isLocationEnabled()){
-                        Log.i("TAG", "showLocationDialog: isLocationEnabled")
                         getFreshLocation()
-                        Log.i("TAG", "isLocationEnabled: ")
                         updateConfig()
-                        getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
-//
+                        if(isWifiConnected(requireContext())){
+                            getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
+                            getForcastWeather(lattitudeValue,longituteValue,lang,unite)
+                            binding.dailyLinear.visibility = View.VISIBLE
+                            binding.hourlyLinear.visibility = View.VISIBLE
+                        }else{
+                            binding.dailyLinear.visibility = View.GONE
+                            binding.hourlyLinear.visibility = View.GONE
+                            viewModel.getAllOfflineWeather()
+                            viewModel.offlineWeather.observe(viewLifecycleOwner , Observer { weather ->
+                                UpdateUiFromOffline(weather.get(0))
+                            })
+                        }
                     }else{
-                        Log.i("TAG", "showLocationDialog: isLocationEnabled else")
                         location.enableLocationServices()
                         getFreshLocation()
                     }
                 }else{
-                    Log.i("TAG", "showLocationDialog: requestPermissions else")
                     requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
                         LOCATION_PERMISSION_REQUEST_CODE
                     )
@@ -209,21 +212,15 @@ class HomeFragment : Fragment() {
                     0 -> {
                         // Use GPS
                         if(location.checkPermissions()){
-                            Log.i("TAG", "showLocationDialog: checkPermissions")
                             if(location.isLocationEnabled()){
-                                Log.i("TAG", "showLocationDialog: isLocationEnabled")
                                 getFreshLocation()
-                                Log.i("TAG", "isLocationEnabled: ")
                                 updateConfig()
-                                getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
 //
                             }else{
-                                Log.i("TAG", "showLocationDialog: isLocationEnabled else")
                                 location.enableLocationServices()
                                 getFreshLocation()
                             }
                         }else{
-                            Log.i("TAG", "showLocationDialog: requestPermissions else")
                             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION),
                                 LOCATION_PERMISSION_REQUEST_CODE
                             )
@@ -287,8 +284,19 @@ class HomeFragment : Fragment() {
 
                         updateConfig()
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
-                        getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
-                        getForcastWeather(lattitudeValue,longituteValue,lang,unite)
+                        if(isWifiConnected(requireContext())){
+                            getCurrentWeather(lattitudeValue,longituteValue,lang,unite)
+                            getForcastWeather(lattitudeValue,longituteValue,lang,unite)
+                            binding.dailyLinear.visibility = View.VISIBLE
+                            binding.hourlyLinear.visibility = View.VISIBLE
+                        }else{
+                            binding.dailyLinear.visibility = View.GONE
+                            binding.hourlyLinear.visibility = View.GONE
+                            viewModel.getAllOfflineWeather()
+                            viewModel.offlineWeather.observe(viewLifecycleOwner , Observer { weather ->
+                                UpdateUiFromOffline(weather.get(0))
+                            })
+                        }
 
                     } else {
                         Log.e("TAG", "No location detected")
@@ -305,17 +313,16 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             updateConfig()
             viewModel.getCurrentWeather(lat,lon,lang,unit)
-            Log.i("TAG", "getCurrentWeather: frament ")
 
             viewModel.weatherStateFlow.collectLatest { state ->
                 when (state) {
                     is ApiState.Loading -> {
                         homeBar.visibility = View.VISIBLE
-                        Log.i("TAG", "Loading products...")
                     }
                     is ApiState.Success -> {
                         homeBar.visibility = View.GONE
                         updateUI(state.data)
+                        updateFromCurrent(state.data)
                     }
                     is ApiState.Failure -> {
                         homeBar.visibility = View.GONE
@@ -380,15 +387,32 @@ class HomeFragment : Fragment() {
             }
         }
     }
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     fun updateUI(response : WeatherResponse?){
+        var temp  = " °C"
+        var wind  = " m/s"
+        when(unite){
+            "metric"->{
+                temp=" °C"
+                wind = " m/s"
+            }
+            "standard"->{
+                temp=" K"
+                wind = " m/s"
+            }
+            "imperial"->{
+                temp=" °F"
+                wind = " m/h"
+            }
+        }
         Log.i("TAG", "updateUI: ${response.toString()}")
         binding.precipitationText.text = response?.weather?.get(0)?.description
-        binding.temperatureText.text = response?.main?.temp.toString()
+        binding.temperatureText.text = "${response?.main?.temp.toString()}$temp"
         binding.maxMinTemperature.text = getCurrentDateTime()
         Log.i("TAG", "updateUI: ${getCurrentDateTime()}")
-        binding.humidityValuetxt.text = response?.main?.humidity?.toString()
-        binding.windValuetxt.text = response?.wind?.speed?.toString()
+        binding.humidityValuetxt.text = "${response?.main?.humidity?.toString()} %"
+        binding.windValuetxt.text = "${response?.wind?.speed?.toString()}$wind"
         binding.cloudValuetxt.text = response?.clouds?.all.toString()
         binding.pressureValuetxt.text = response?.main?.pressure.toString()
         binding.cityNametxt.text = response?.name
@@ -406,5 +430,45 @@ class HomeFragment : Fragment() {
         }else{
             unite = "metric"
         }
+    }
+   fun updateFromCurrent(response : WeatherResponse?){
+       offlineData.name = response?.name.toString()
+       offlineData.all = response?.clouds?.all?:0
+       offlineData.description = response?.weather?.get(0)?.description?:""
+       offlineData.temp = response?.main?.temp?:0.0
+       offlineData.humidity = response?.main?.humidity?:0
+       offlineData.pressure = response?.main?.pressure?:0
+       offlineData.speed = response?.wind?.speed?:0.0
+       viewModel.insertOfflieneWeather(offlineData)
+   }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("SetTextI18n")
+    fun UpdateUiFromOffline(w : OfflineWeather){
+        var temp  = " °C"
+        var wind  = " m/s"
+        when(unite){
+            "metric"->{
+                temp=" °C"
+                wind = " m/s"
+            }
+            "standard"->{
+                temp=" K"
+                wind = " m/s"
+            }
+            "imperial"->{
+                temp=" °F"
+                wind = " m/h"
+            }
+        }
+        binding.precipitationText.text = w.description
+        binding.temperatureText.text = "${w.temp.toString()}$temp"
+        binding.maxMinTemperature.text = getCurrentDateTime()
+        binding.humidityValuetxt.text = "${w.humidity?.toString()} %"
+        binding.windValuetxt.text = "${w.speed?.toString()}$wind"
+        binding.cloudValuetxt.text = w.all.toString()
+        binding.pressureValuetxt.text = w.pressure.toString()
+        binding.cityNametxt.text = w.name
+
     }
 }
