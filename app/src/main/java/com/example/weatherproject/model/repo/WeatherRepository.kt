@@ -58,4 +58,16 @@ class WeatherRepository(private var remoteDataSource: IWeatherRemoteDataSource, 
     override suspend fun deleteWeather(weatherModel: WeatherModel){
         localDataAource.deleteWeather(weatherModel)
     }
+
+    override fun isisSharedPreferencesContains(key: String): Boolean {
+       return sharedDataSource.isSharedPreferencesContains(key)
     }
+
+    override fun saveData(key: String, value: Double) {
+        sharedDataSource.saveData(key,value)
+    }
+
+    override fun addSelected() {
+        sharedDataSource.addSelected()
+    }
+}

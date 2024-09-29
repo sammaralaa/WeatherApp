@@ -27,4 +27,20 @@ class SharedDataSource( var sharedPreference: SharedPreferences) : ISharedDataSo
         return Pair(lon.toDouble(),lat.toDouble())
     }
 
+    override fun addSelected() {
+        val editor = sharedPreference.edit()
+        editor.putBoolean("selected", true)
+        editor.apply()
+    }
+
+    override fun saveData(key: String, value: Double) {
+        val editor = sharedPreference.edit()
+        editor.putFloat(key, value.toFloat())
+        editor.apply()
+    }
+
+    override fun isSharedPreferencesContains(key: String): Boolean {
+        return sharedPreference.contains(key)
+    }
+
 }

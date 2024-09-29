@@ -162,9 +162,9 @@ class HomeFragment : Fragment() {
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onStart() {
         super.onStart()
-        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+        if(viewModel.isSharedPreferencesContains(KEY)){
             updateConfig()
-            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
+            if(viewModel.isSharedPreferencesContains("lon")){
                var lon =  viewModel.getDataFromSharedPref().first
                var lat =  viewModel.getDataFromSharedPref().second
                 updateConfig()
@@ -194,7 +194,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }else{
-            viewModel.addSelected(requireActivity())
+            viewModel.addSelected()
             showLocationDialog()
         }
     }
@@ -282,8 +282,8 @@ class HomeFragment : Fragment() {
                         longituteValue = location?.longitude?:0.0
 
                         // Save the data in shared preferences
-                        viewModel.saveData("lon", longituteValue, requireActivity())
-                        viewModel.saveData("lat", lattitudeValue, requireActivity())
+                        viewModel.saveData("lon", longituteValue)
+                        viewModel.saveData("lat", lattitudeValue)
 
                         updateConfig()
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
@@ -394,14 +394,14 @@ class HomeFragment : Fragment() {
         binding.cityNametxt.text = response?.name
     }
     fun updateConfig(){
-        if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
+        if(viewModel.isSharedPreferencesContains("lang")){
             lang = viewModel.getStringFromSharedPref("lang").toString()
             u.setAppLocale(lang,requireContext())
         }else{
             lang = "en"
             u.setAppLocale(lang,requireContext())
         }
-        if(viewModel.isSharedPreferencesContains("units",requireActivity())){
+        if(viewModel.isSharedPreferencesContains("units")){
             unite = viewModel.getStringFromSharedPref("units").toString()
         }else{
             unite = "metric"

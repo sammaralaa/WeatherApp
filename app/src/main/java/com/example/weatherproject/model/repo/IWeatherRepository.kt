@@ -17,6 +17,9 @@ interface IWeatherRepository {
     suspend fun getLocalWeathers() : Flow<List<WeatherModel>>
     suspend fun insertWeather(weatherModel: WeatherModel)
     suspend fun deleteWeather(weatherModel: WeatherModel)
+     fun isisSharedPreferencesContains(key: String): Boolean
+     fun saveData(key: String, value: Double)
+    fun addSelected()
 
 
 }

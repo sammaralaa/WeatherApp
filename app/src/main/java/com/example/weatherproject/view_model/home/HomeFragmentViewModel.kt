@@ -79,25 +79,18 @@ class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel()
         }
     }
 
-    fun isSharedPreferencesContains(key : String,activity: Activity) : Boolean{
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.contains(key)
+    fun isSharedPreferencesContains(key : String) : Boolean{
+        return repo.isisSharedPreferencesContains(key)
     }
     fun getDataFromSharedPref() : Pair<Double,Double>{
         return repo.getCoordFromSharedPref()
     }
     @SuppressLint("SuspiciousIndentation")
-    fun addSelected(activity: Activity){
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-            editor.putBoolean("selected", true)
-            editor.apply()
+    fun addSelected(){
+        repo.addSelected()
     }
-     fun saveData(key: String, value: Double,activity: Activity) {
-        val sharedPreferences =activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putFloat(key, value.toFloat())
-        editor.apply() // or editor.commit() for synchronous saving
+     fun saveData(key: String, value: Double) {
+       repo.saveData(key,value)
         Log.i("TAG", "saveData: $key == $value ")
     }
     fun saveData(key: String, value: String) {

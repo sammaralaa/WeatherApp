@@ -18,4 +18,16 @@ class FakeSharedDataSource() :ISharedDataSource {
     override fun getDataFromSharedPref(): Pair<Double, Double> {
        return Pair(0.0,0.0)
     }
+
+    override fun addSelected() {
+        TODO("Not yet implemented")
+    }
+
+    override fun saveData(key: String, value: Double) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isSharedPreferencesContains(key: String): Boolean {
+        TODO("Not yet implemented")
+    }
 }
