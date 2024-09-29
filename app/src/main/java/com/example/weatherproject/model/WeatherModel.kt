@@ -62,3 +62,11 @@ data class WeatherForcastModel(
     val sys: Sys,
     val dt_txt : String
 )
+
+@Entity(tableName = "alert_data")
+data class AlarmData(
+    @PrimaryKey(autoGenerate = true)var id : Int =0,
+    var time: String,
+    var date: String,
+    var workerId : String
+)
