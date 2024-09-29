@@ -91,6 +91,7 @@ dependencies {
     //ViewModel
     implementation ("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     // InstantTaskExecutorRule
     testImplementation ("androidx.arch.core:core-testing:2.1.0")

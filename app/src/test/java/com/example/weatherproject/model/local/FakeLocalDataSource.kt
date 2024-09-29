@@ -10,8 +10,6 @@ class FakeLocalDataSource(var weatherData: MutableList<WeatherModel>? = mutableL
         private val weatherFlow = MutableStateFlow<List<WeatherModel>>(emptyList())
 
         override suspend fun getAllWeathers(): Flow<List<WeatherModel>> {
-//            weatherData?.let { return flowOf(ArrayList(it)) }
-//            return flowOf(emptyList())
             return flow {
                 weatherData?.let { emit(ArrayList(it)) } ?: emit(emptyList())
             }
@@ -25,3 +23,23 @@ class FakeLocalDataSource(var weatherData: MutableList<WeatherModel>? = mutableL
             weatherData?.remove(weatherModel)
         }
     }
+//class FakeLocalDataSource( var weatherData: MutableList<WeatherModel> = mutableListOf()) : IWeatherLocalDataSource {
+//    private val weatherFlow = MutableStateFlow<List<WeatherModel>>(weatherData)
+//
+//    override suspend fun getAllWeathers(): Flow<List<WeatherModel>> {
+//        // Emit the current weather data
+//        return weatherFlow
+//    }
+//
+//    override suspend fun insertWeather(weatherModel: WeatherModel) {
+//        weatherData.add(weatherModel)
+//        // Update the flow to notify observers of the change
+//        weatherFlow.value = ArrayList(weatherData)
+//    }
+//
+//    override suspend fun deleteWeather(weatherModel: WeatherModel) {
+//        weatherData.remove(weatherModel)
+//        // Update the flow to notify observers of the change
+//        weatherFlow.value = ArrayList(weatherData)
+//    }
+//}
