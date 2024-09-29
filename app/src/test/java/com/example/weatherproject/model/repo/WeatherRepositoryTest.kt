@@ -47,7 +47,6 @@ class WeatherRepositoryTest {
 
     @Before
     fun setup() {
-        // Initialize fake data sources with test data
         fakeLocalDataSource = FakeLocalDataSource(localWeatherList.toMutableList())
 
         fakeWeatherResponse = WeatherResponse(
@@ -66,36 +65,37 @@ class WeatherRepositoryTest {
             cod = 200
         )
         fakeRemoteDataSource = FakeRemoteDataSource(fakeWeatherResponse)
-        // Initialize the repository with fake data sources
         weatherRepository = WeatherRepository(fakeRemoteDataSource, fakeLocalDataSource, FakeSharedDataSource())
     }
     @Test
      fun getLocalWeathers_returnsLocalWeatherData() = runTest {
-        // When: fetching local weathers
         val result = weatherRepository.getLocalWeathers().toList()
         assertThat(result, `is`(listOf(localWeatherList)))
+
+    }
+    @Test
+    fun getLocalWeathers_returnsEmptyList() = runTest {
+        var repo = WeatherRepository(fakeRemoteDataSource,FakeLocalDataSource(emptyList<WeatherModel>().toMutableList()),FakeSharedDataSource())
+
+        val result = repo.getLocalWeathers().toList().get(0)
+        assertThat(result, `is` (emptyList()))
 
     }
 
     @Test
     fun insertWeather_addsWeatherToLocalDataSource() = runTest {
-        // Given: a new weather model to insert
         val newWeather = WeatherModel("New York", 40.7, -74.0, "en", "metric")
 
-        // When: inserting the new weather
         weatherRepository.insertWeather(newWeather)
 
-        // Then: the local data source should contain the new weather
         val result = weatherRepository.getLocalWeathers().first()
         assertThat(result, hasItem(newWeather))
     }
 
     @Test
     fun getCurrentWeather_returnsWeatherData() = runTest {
-        // When: fetching current weather
         val result = weatherRepository.getCurrentWeather(12.34, 56.78, "en", "metric").toList()
 
-        // Then: assert that the emitted data matches the expected fake response
         assertThat(result[0], `is`(fakeWeatherResponse))
     }
 
