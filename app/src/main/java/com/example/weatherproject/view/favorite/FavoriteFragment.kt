@@ -62,7 +62,7 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         favFactory = FavFragmentViewModelFactory(
             WeatherRepository.getInstance(
             WeatherRemoteDataSource(RetrofitHelper.service),
-            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
+            WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao(),WeatherDataBase.getInstance(requireContext()).getAlertDao()),
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
         ))
         favViewModel = ViewModelProvider(this, favFactory).get(FavFragmentViewModel::class.java)

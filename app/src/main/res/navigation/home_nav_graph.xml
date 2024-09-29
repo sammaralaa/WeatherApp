@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/alertsFragment"
-        android:name="com.example.weatherproject.view.AlertsFragment"
+        android:name="com.example.weatherproject.view.home.alerts.AlertsFragment"
         android:label="@string/alerts"
         tools:layout="@layout/fragment_alerts" />
     <fragment

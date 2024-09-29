@@ -1,5 +1,7 @@
 package com.example.weatherproject.model.repo
 
+import android.util.Log
+import com.example.weatherproject.model.AlarmData
 import com.example.weatherproject.model.WeatherForcastModel
 import com.example.weatherproject.model.WeatherModel
 import com.example.weatherproject.model.WeatherResponse
@@ -69,5 +71,16 @@ class WeatherRepository(private var remoteDataSource: IWeatherRemoteDataSource, 
 
     override fun addSelected() {
         sharedDataSource.addSelected()
+    }
+    override suspend fun getAllAlerts() : Flow<List<AlarmData>>{
+        return localDataAource.getAllAlerts()
+    }
+    override suspend fun inserAlerts(alert: AlarmData){
+        val l = localDataAource.inserAlerts(alert)
+
+        Log.i("TAG", "insertAlert: $l from weatherLocalDataSource")
+    }
+    override suspend fun deleteAlert(alert: AlarmData){
+        localDataAource.deleteAlert(alert)
     }
 }

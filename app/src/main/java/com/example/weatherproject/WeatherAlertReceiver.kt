@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
-import com.example.weatherproject.view.AlertsFragment
+import com.example.weatherproject.view.home.alerts.AlertsFragment
 
 class WeatherAlertReceiver : BroadcastReceiver() {
 
