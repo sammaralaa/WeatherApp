@@ -83,4 +83,8 @@ class WeatherRepository(private var remoteDataSource: IWeatherRemoteDataSource, 
     override suspend fun deleteAlert(alert: AlarmData){
         localDataAource.deleteAlert(alert)
     }
+
+    override suspend fun deleteAlertById(alertId: String?) {
+        localDataAource.deleteAlertById(alertId)
+    }
 }

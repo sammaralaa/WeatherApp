@@ -83,7 +83,6 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
             } else {
                 binding.emptyFavorits.visibility = View.VISIBLE
                 binding.noFavTxt.visibility = View.VISIBLE
-                binding.favRecycler.visibility = View.INVISIBLE
                 Log.i("TAG", "FavoriteFragment No weather data available.")
             }
         } )

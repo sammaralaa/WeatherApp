@@ -8,7 +8,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 object Permission {
-    object NotificationPermission {
+
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
 
         fun requestNotificationPermission(activity: Activity) {
@@ -28,5 +28,5 @@ object Permission {
                 }
             }
         }
-    }
+
 }

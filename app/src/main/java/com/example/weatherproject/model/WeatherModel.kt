@@ -66,7 +66,9 @@ data class WeatherForcastModel(
 @Entity(tableName = "alert_data")
 data class AlarmData(
     @PrimaryKey(autoGenerate = true)var id : Int =0,
-    var time: String,
-    var date: String,
+    var time: Long,
+    var date: Long,
+    var type : String,
+    var message : String,
     var workerId : String
 )

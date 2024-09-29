@@ -27,6 +27,11 @@ class WeatherLocalDataSource(private var dao : WeatherDao,private var alertDao :
         var l = alertDao.insertAlert(alert)
         Log.i("TAG", "insertAlert: $l from weatherLocalDataSource")
     }
+
+    override suspend fun deleteAlertById(alertId: String?) {
+        alertDao.deleteAlertById(alertId)
+    }
+
     override suspend fun deleteAlert(alert: AlarmData){
         alertDao.deleteAlert(alert)
     }
