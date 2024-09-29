@@ -8,6 +8,7 @@ import com.example.weatherproject.network.ApiStateForcast
 import com.example.weatherproject.view_model.favorite.FavFragmentViewModel
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertTrue
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -46,13 +47,11 @@ class HomeFragmentViewModelTest{
     }
     @Test
     fun `getForcastWeather should emit Success when forecast data is fetched and filtered correctly`() = runTest {
-        // Arrange: Use the FakeRepository and set it to return success
         Repository.setShouldReturnError(false)
 
-        // Act: Call the getForcastWeather method in the ViewModel
         viewModel.getForcastWeather(48.8566, 2.3522, "en", "metric")
+        advanceUntilIdle()
 
-        // Assert: Check that the hourly and daily state flows are set to Success
         val hourlyWeatherState = viewModel.weatherHourlyStateFlow.value
         assertTrue(hourlyWeatherState is ApiStateForcast.Success)
 
