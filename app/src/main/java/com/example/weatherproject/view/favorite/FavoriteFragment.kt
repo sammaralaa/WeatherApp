@@ -1,33 +1,30 @@
 package com.example.weatherproject.view.favorite
 
 import android.content.Context
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentFavoriteBinding
 import com.example.weatherproject.db.WeatherDataBase
+import com.example.weatherproject.isWifiConnected
 import com.example.weatherproject.model.WeatherModel
-import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.view_model.favorite.FavFragmentViewModel
 import com.example.weatherproject.view_model.favorite.FavFragmentViewModelFactory
-import com.example.weatherproject.view_model.home.HomeFragmentViewModel
-import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
@@ -39,6 +36,8 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
     lateinit var favFactory : FavFragmentViewModelFactory
     lateinit var favAdapter: WeatherFavAdapter
     private lateinit var mLayoutManager: GridLayoutManager
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +53,8 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         super.onViewCreated(view, savedInstanceState)
         fab = binding.fab
         recyclerView = binding.favRecycler
+
+
 
         fab.setOnClickListener {
            findNavController().navigate(R.id.action_favoriteFragment_to_newMapFragment)
@@ -88,8 +89,21 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         } )
     }
 
-    override fun showWeather(lat: Double, lon: Double) {
-            findNavController().navigate(R.id.action_favoriteFragment_to_favDetailsFragment)
+    override fun showWeather(weather: WeatherModel) {
+        Log.i("SharedViewModelTest", "showWeather: $weather")
+        if(isWifiConnected(requireContext())){
+            val bundle = Bundle().apply {
+                putString("unite", weather.unite)
+                putString("lang", weather.lang)
+                putDouble("lat", weather.lat)
+                putDouble("lon", weather.lon)
+            }
+            findNavController().navigate(R.id.action_favoriteFragment_to_favDetailsFragment,bundle)
+        }
+        else{
+            Toast.makeText(requireContext(), "There is no connection", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     override fun removeFromFav(weather: WeatherModel) {

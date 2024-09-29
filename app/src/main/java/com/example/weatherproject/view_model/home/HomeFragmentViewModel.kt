@@ -9,9 +9,11 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherproject.model.WeatherRepository
-import com.example.weatherproject.model.WeatherResponse
-import com.example.weatherproject.model.Wind
+import com.example.weatherproject.areSameDay
+import com.example.weatherproject.getCurrentDateTime
+import com.example.weatherproject.isMidnight
+import com.example.weatherproject.model.repo.IWeatherRepository
+import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.network.ApiState
 import com.example.weatherproject.network.ApiStateForcast
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +22,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() {
+
+class HomeFragmentViewModel(private val repo : IWeatherRepository) : ViewModel() {
 //    private val _weather = MutableLiveData<WeatherResponse?>()
 //    val weather: LiveData<WeatherResponse?> = _weather
     private val _weatherStateFlow = MutableStateFlow<ApiState>(ApiState.Loading)
@@ -78,25 +79,18 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
         }
     }
 
-    fun isSharedPreferencesContains(key : String,activity: Activity) : Boolean{
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.contains(key)
+    fun isSharedPreferencesContains(key : String) : Boolean{
+        return repo.isisSharedPreferencesContains(key)
     }
     fun getDataFromSharedPref() : Pair<Double,Double>{
         return repo.getCoordFromSharedPref()
     }
     @SuppressLint("SuspiciousIndentation")
-    fun addSelected(activity: Activity){
-        val sharedPreferences = activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-            editor.putBoolean("selected", true)
-            editor.apply()
+    fun addSelected(){
+        repo.addSelected()
     }
-     fun saveData(key: String, value: Double,activity: Activity) {
-        val sharedPreferences =activity.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putFloat(key, value.toFloat())
-        editor.apply() // or editor.commit() for synchronous saving
+     fun saveData(key: String, value: Double) {
+       repo.saveData(key,value)
         Log.i("TAG", "saveData: $key == $value ")
     }
     fun saveData(key: String, value: String) {
@@ -108,26 +102,5 @@ class HomeFragmentViewModel(private val repo : WeatherRepository) : ViewModel() 
     fun removeFromSharedPref(key : String){
         repo.removeFromSharedPref(key)
     }
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getCurrentDateTime(): String {
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return current.format(formatter)
-        Log.i("TAG", "getCurrentDateTime: ")
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun areSameDay(dateTimeString1: String, dateTimeString2: String): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val dateTime1 = LocalDateTime.parse(dateTimeString1, formatter)
-        val dateTime2 = LocalDateTime.parse(dateTimeString2, formatter)
-        return dateTime1.toLocalDate() == dateTime2.toLocalDate()
-    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun isMidnight(dateTimeString: String): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val dateTime = LocalDateTime.parse(dateTimeString, formatter)
-
-        return dateTime.toLocalTime().toString() == "00:00"
-    }
 }

@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 
-class SharedDataSource(override var sharedPreference: SharedPreferences) : ISharedDataSource {
+class SharedDataSource( var sharedPreference: SharedPreferences) : ISharedDataSource {
 
     override fun getStringFromSharedPref(key : String) : String?{
         return sharedPreference.getString(key,"")
@@ -25,6 +25,22 @@ class SharedDataSource(override var sharedPreference: SharedPreferences) : IShar
         var lon =  sharedPreference.getFloat("lon", 0.0f)
         var lat =  sharedPreference.getFloat("lat", 0.0f)
         return Pair(lon.toDouble(),lat.toDouble())
+    }
+
+    override fun addSelected() {
+        val editor = sharedPreference.edit()
+        editor.putBoolean("selected", true)
+        editor.apply()
+    }
+
+    override fun saveData(key: String, value: Double) {
+        val editor = sharedPreference.edit()
+        editor.putFloat(key, value.toFloat())
+        editor.apply()
+    }
+
+    override fun isSharedPreferencesContains(key: String): Boolean {
+        return sharedPreference.contains(key)
     }
 
 }

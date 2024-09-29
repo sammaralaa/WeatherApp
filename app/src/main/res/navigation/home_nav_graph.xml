@@ -49,8 +49,8 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.weatherproject.view.settings.MapFragment"
-        android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
+        android:label="@string/map"
+        tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_mapFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -58,7 +58,7 @@
     <fragment
         android:id="@+id/newMapFragment"
         android:name="com.example.weatherproject.view.favorite.NewMapFragment"
-        android:label="NewMapFragment" >
+        android:label="@string/map">
         <action
             android:id="@+id/action_newMapFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
@@ -66,6 +66,6 @@
     <fragment
         android:id="@+id/favDetailsFragment"
         android:name="com.example.weatherproject.FavDetailsFragment"
-        android:label="fragment_fav_details"
+        android:label="@string/favorites"
         tools:layout="@layout/fragment_fav_details" />
 </navigation>

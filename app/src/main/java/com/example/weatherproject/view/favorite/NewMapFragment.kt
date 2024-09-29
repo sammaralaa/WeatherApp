@@ -22,7 +22,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentNewMapBinding
 import com.example.weatherproject.db.WeatherDataBase
-import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.model.local.WeatherLocalDataSource
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper

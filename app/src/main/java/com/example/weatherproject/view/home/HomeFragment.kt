@@ -2,19 +2,17 @@ package com.example.weatherproject.view.home
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -33,8 +31,9 @@ import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import com.example.weatherproject.R
 import com.example.weatherproject.databinding.FragmentHomeBinding
 import com.example.weatherproject.db.WeatherDataBase
+import com.example.weatherproject.getCurrentDateTime
 import com.example.weatherproject.model.local.WeatherLocalDataSource
-import com.example.weatherproject.model.WeatherRepository
+import com.example.weatherproject.model.repo.WeatherRepository
 import com.example.weatherproject.model.WeatherResponse
 import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.ApiState
@@ -76,11 +75,15 @@ class HomeFragment : Fragment() {
     lateinit var hourlyRecyclerView: RecyclerView
     private lateinit var hourlyLayoutManager: LayoutManager
 
+    private lateinit var hourlyBar : ProgressBar
+    private lateinit var homeBar : ProgressBar
+
     lateinit var location : Gpslocation
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        allFactory = HomeFragmentViewModelFactory(WeatherRepository.getInstance(
+        allFactory = HomeFragmentViewModelFactory(
+            WeatherRepository.getInstance(
             WeatherRemoteDataSource(RetrofitHelper.service),
             WeatherLocalDataSource(WeatherDataBase.getInstance(requireContext()).getWeatherDao()),
             SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
@@ -89,29 +92,29 @@ class HomeFragment : Fragment() {
         updateConfig()
         location = Gpslocation(requireContext())
         geoCoder = Geocoder(requireContext())
-        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
-            updateConfig()
-            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
-                var lon =  viewModel.getDataFromSharedPref().first
-                var lat =  viewModel.getDataFromSharedPref().second
-
-                    var name =  geoCoder.getFromLocation(lat,lon,5)?.get(0)
-                    Log.i("TAG", "onLocationResult: adminArea = ${ name?.adminArea}")
-                    Log.i("TAG", "onLocationResult: subAdminArea = ${ name?.subAdminArea}")
-                    Log.i("TAG", "onLocationResult: countryName = ${ name?.countryName}")
-                    Log.i("TAG", "onLocationResult: locale = ${ name?.locale}")
-                    Log.i("TAG", "onLocationResult: locality = ${ name?.locality}")
-
-
-                updateConfig()
-                getCurrentWeather(lat,lon,lang,unite)
-                getForcastWeather(lat,lon,lang,unite)
-            }
-
-        }else{
-            viewModel.addSelected(requireActivity())
-            showLocationDialog()
-        }
+//        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+//            updateConfig()
+//            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
+//                var lon =  viewModel.getDataFromSharedPref().first
+//                var lat =  viewModel.getDataFromSharedPref().second
+//
+//                    var name =  geoCoder.getFromLocation(lat,lon,5)?.get(0)
+////                    Log.i("TAG", "onLocationResult: adminArea = ${ name?.adminArea}")
+////                    Log.i("TAG", "onLocationResult: subAdminArea = ${ name?.subAdminArea}")
+////                    Log.i("TAG", "onLocationResult: countryName = ${ name?.countryName}")
+////                    Log.i("TAG", "onLocationResult: locale = ${ name?.locale}")
+////                    Log.i("TAG", "onLocationResult: locality = ${ name?.locality}")
+//
+//
+//                updateConfig()
+//                getCurrentWeather(lat,lon,lang,unite)
+//                getForcastWeather(lat,lon,lang,unite)
+//            }
+//
+//        }else{
+//            viewModel.addSelected(requireActivity())
+//            showLocationDialog()
+//        }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -134,6 +137,9 @@ class HomeFragment : Fragment() {
         // Optional: Handle the drawer icon click
         toolbar?.setHomeButtonEnabled(true)
         toolbar?.setHomeAsUpIndicator(navIcon)
+
+        homeBar = binding.homeBar
+        hourlyBar = binding.hourlyBar
         dailyRecyclerView = binding.forcastDailyRecycler
         dailyAdapter = ForcastItemAdapter()
         dailyLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL,false)
@@ -156,9 +162,9 @@ class HomeFragment : Fragment() {
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onStart() {
         super.onStart()
-        if(viewModel.isSharedPreferencesContains(KEY,requireActivity())){
+        if(viewModel.isSharedPreferencesContains(KEY)){
             updateConfig()
-            if(viewModel.isSharedPreferencesContains("lon",requireActivity())){
+            if(viewModel.isSharedPreferencesContains("lon")){
                var lon =  viewModel.getDataFromSharedPref().first
                var lat =  viewModel.getDataFromSharedPref().second
                 updateConfig()
@@ -188,7 +194,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }else{
-            viewModel.addSelected(requireActivity())
+            viewModel.addSelected()
             showLocationDialog()
         }
     }
@@ -276,8 +282,8 @@ class HomeFragment : Fragment() {
                         longituteValue = location?.longitude?:0.0
 
                         // Save the data in shared preferences
-                        viewModel.saveData("lon", longituteValue, requireActivity())
-                        viewModel.saveData("lat", lattitudeValue, requireActivity())
+                        viewModel.saveData("lon", longituteValue)
+                        viewModel.saveData("lat", lattitudeValue)
 
                         updateConfig()
                         Log.i("TAG", "Location retrieved: lat=$lattitudeValue, lon=$longituteValue")
@@ -304,13 +310,15 @@ class HomeFragment : Fragment() {
             viewModel.weatherStateFlow.collectLatest { state ->
                 when (state) {
                     is ApiState.Loading -> {
-
+                        homeBar.visibility = View.VISIBLE
                         Log.i("TAG", "Loading products...")
                     }
                     is ApiState.Success -> {
+                        homeBar.visibility = View.GONE
                         updateUI(state.data)
                     }
                     is ApiState.Failure -> {
+                        homeBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
                             "Failed to load weather, please try again",
@@ -332,14 +340,16 @@ class HomeFragment : Fragment() {
             viewModel.weatherHourlyStateFlow.collectLatest { state ->
                 when (state) {
                     is ApiStateForcast.Loading -> {
-
+                        hourlyBar.visibility = View.VISIBLE
                         Log.i("TAG", "Loading products...")
                     }
                     is ApiStateForcast.Success -> {
+                        hourlyBar.visibility = View.GONE
                         hourlyAdapter.submitList(state.data)
                         Log.i("TAG", "getForcastWeather: Hourly ---> ${state.data.size}")
                     }
                     is ApiStateForcast.Failure -> {
+                        hourlyBar.visibility = View.GONE
                         Toast.makeText(
                             requireContext(),
                             "Failed to load weather, please try again",
@@ -375,8 +385,8 @@ class HomeFragment : Fragment() {
         Log.i("TAG", "updateUI: ${response.toString()}")
         binding.precipitationText.text = response?.weather?.get(0)?.description
         binding.temperatureText.text = response?.main?.temp.toString()
-        binding.maxMinTemperature.text = viewModel.getCurrentDateTime()
-        Log.i("TAG", "updateUI: ${viewModel.getCurrentDateTime()}")
+        binding.maxMinTemperature.text = getCurrentDateTime()
+        Log.i("TAG", "updateUI: ${getCurrentDateTime()}")
         binding.humidityValuetxt.text = response?.main?.humidity?.toString()
         binding.windValuetxt.text = response?.wind?.speed?.toString()
         binding.cloudValuetxt.text = response?.clouds?.all.toString()
@@ -384,17 +394,17 @@ class HomeFragment : Fragment() {
         binding.cityNametxt.text = response?.name
     }
     fun updateConfig(){
-        if(viewModel.isSharedPreferencesContains("lang",requireActivity())){
+        if(viewModel.isSharedPreferencesContains("lang")){
             lang = viewModel.getStringFromSharedPref("lang").toString()
             u.setAppLocale(lang,requireContext())
         }else{
             lang = "en"
             u.setAppLocale(lang,requireContext())
         }
-        if(viewModel.isSharedPreferencesContains("units",requireActivity())){
+        if(viewModel.isSharedPreferencesContains("units")){
             unite = viewModel.getStringFromSharedPref("units").toString()
         }else{
-            unite = "standard"
+            unite = "metric"
         }
     }
 }

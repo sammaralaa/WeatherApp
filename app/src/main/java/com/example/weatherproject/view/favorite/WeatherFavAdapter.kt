@@ -25,7 +25,7 @@ class WeatherFavAdapter(var onFavClickListener: OnFavClickListener,var onRemoveF
           holder.binding.cardLat.text = currentWeather.lat.toString()
           holder.binding.cardLon.text = currentWeather.lon.toString()
           holder.binding.card.setOnClickListener{
-                onFavClickListener.showWeather(currentWeather.lat,currentWeather.lon)
+                onFavClickListener.showWeather(currentWeather)
           }
         holder.binding.removeImg.setOnClickListener{
             onRemoveFavClickListener.removeFromFav(currentWeather)
