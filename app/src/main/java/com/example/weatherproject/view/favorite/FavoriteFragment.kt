@@ -44,7 +44,6 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         binding =  FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -53,8 +52,6 @@ class FavoriteFragment : Fragment(),OnFavClickListener,OnRemoveFavClickListener{
         super.onViewCreated(view, savedInstanceState)
         fab = binding.fab
         recyclerView = binding.favRecycler
-
-
 
         fab.setOnClickListener {
            findNavController().navigate(R.id.action_favoriteFragment_to_newMapFragment)

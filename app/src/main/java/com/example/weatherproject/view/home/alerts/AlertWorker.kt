@@ -64,7 +64,6 @@ class AlertWorker(appContext: Context, workerParams: WorkerParameters) : Corouti
             NotificationChannel(channelId,"notificationChannel" ,NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
 
-       // if(sharedPreferences.getBoolean("notification",false)){
             if(type =="n") {
                 val notification = NotificationCompat.Builder(context, channelId)
                     .setContentTitle(context.getString(R.string.app_name))

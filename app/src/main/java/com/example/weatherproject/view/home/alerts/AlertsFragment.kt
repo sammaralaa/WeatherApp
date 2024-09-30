@@ -111,8 +111,7 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
                 SharedDataSource(requireActivity().getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE))
             ))
         AViewModel = ViewModelProvider(this, AFactory).get(AlertsViewModel::class.java)
-//        var alert = AlarmData(time="12:32",date = "21-3-2002", workerId = "34y4y")
-//        AViewModel.insertAlert(alert)
+
         AViewModel.getAllAlerts()
         recyclerView = binding.alertRecycler
         alertAdapter = AlertsAdapter(this)
@@ -153,17 +152,14 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
         rbNotification = dialogView.findViewById(R.id.rbNotification)
 
 
-        // Date and Time pickers for 'From'
         btnFrom.setOnClickListener {
             pickDateTime(fromCalendar) { updateText(txtFromDate,txtFromTime, fromCalendar) }
         }
 
-        // Date and Time pickers for 'To'
         btnTo.setOnClickListener {
             pickDateTime(toCalendar) { updateText(txtToDate,txtToTime, toCalendar) }
         }
 
-        // Save button click listener
         btnSave.setOnClickListener {
             var type : String = ""
             val isAlarmSelected = rbAlarm.isChecked
@@ -189,8 +185,6 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
                 }
             }
 
-
-             // Close dialog after saving
         }
     }
 
@@ -198,12 +192,10 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val currentMinute = calendar.get(Calendar.MINUTE)
 
-        // Time picker
         TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
             calendar.set(Calendar.MINUTE, minute)
 
-            // Date picker
             DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, month)
@@ -229,24 +221,23 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
         alertAdapter.notifyDataSetChanged()
     }
 
-    // to schedule and get work id as string
     fun scheduleNotification(context: Context, alarmTime: Long,alarm: AlarmData): String {
         val currentTime = System.currentTimeMillis()
         val delay = alarmTime - currentTime
 
-        val data = Data.Builder() // to pass data to worker
-            .putInt("id",alarm.id) //need fix
+        val data = Data.Builder()
+            .putInt("id",alarm.id)
             .putString("message", alarm.message)
             .putString("type", alarm.type)
             .build()
-        val notificationWork = OneTimeWorkRequestBuilder<AlertWorker>() // schedule
+        val notificationWork = OneTimeWorkRequestBuilder<AlertWorker>()
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
             .setInputData(data)
             .build()
 
-        WorkManager.getInstance(context).enqueue(notificationWork) //enqueue
+        WorkManager.getInstance(context).enqueue(notificationWork)
 
-        return notificationWork.id.toString() //workid
+        return notificationWork.id.toString()
     }
     @SuppressLint("NewApi")
     fun getMessageFromRemote(lat: Double, lon: Double,lang : String,unit:String){
@@ -293,7 +284,6 @@ class AlertsFragment : Fragment(),OnRemoveAlertListener {
                 }
             }}
 
-        // Handle saving logic here
         val newAlert = AlarmData(0,fromCalendar.timeInMillis,fromCalendar.timeInMillis,type,messageFromRemote," ")
         newAlert.workerId = scheduleNotification(requireContext(),fromCalendar.timeInMillis,newAlert)
         AViewModel.insertAlert(newAlert)

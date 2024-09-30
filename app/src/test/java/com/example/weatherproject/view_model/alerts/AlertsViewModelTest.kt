@@ -33,11 +33,9 @@ class AlertsViewModelTest{
     }
     @Test
     fun insertWeather_addsWeatherToList() = runTest {
-        // Act
         viewModel.insertAlert(a)
         viewModel.getAllAlerts()
         val weatherList = viewModel.AlertItem
-        // Assert
         assertThat(weatherList, not(emptyList<AlarmData>()))
     }
 //    @Test

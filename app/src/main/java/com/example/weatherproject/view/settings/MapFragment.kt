@@ -62,7 +62,6 @@ class MapFragment : Fragment() {
         autoCompleteTextView = _binding.autoCompleteSearch
         setupAutoCompleteSearch()
 
-//        // Set a default location
 //        val startPoint = GeoPoint(44.34, 10.99) // Example coordinates
 //        mapView.controller.setCenter(startPoint)
 
@@ -71,7 +70,6 @@ class MapFragment : Fragment() {
     private fun addMapClickListener() {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-                // Handle single tap here
                 p?.let {
                    // val geoPoint: GeoPoint = mapView.projection.fromPixels(event.x.toInt(), event.y.toInt()) as GeoPoint
                     val lat = p.latitude
@@ -84,7 +82,7 @@ class MapFragment : Fragment() {
                     Log.i("TAG", "onViewCreated: Selected Location: Lat: $lat, Lon: $lon")
                     showDialog()
                 }
-                return true // return true if event is handled
+                return true
             }
 
             override fun longPressHelper(p: GeoPoint?): Boolean {
@@ -92,7 +90,6 @@ class MapFragment : Fragment() {
             }
         }
 
-        // Create an overlay to handle map events
         val overlayEvents = MapEventsOverlay(mapEventsReceiver)
         mapView.overlays.add(overlayEvents)
     }
@@ -108,7 +105,7 @@ class MapFragment : Fragment() {
             true
         }
         _binding.map.overlays.add(marker)
-        _binding.map.invalidate() // Refresh the map
+        _binding.map.invalidate()
     }
     override fun onResume() {
         super.onResume()
@@ -188,16 +185,16 @@ class MapFragment : Fragment() {
             }
         })
 
-        // Listen for item selection
+
         autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
             val selectedLocation = parent.getItemAtPosition(position).toString()
             fetchCoordinatesForLocation(selectedLocation) { lat, lon ->
-                // Move the map to the selected location
+
                 val geoPoint = GeoPoint(lat, lon)
                 mapView.controller.setCenter(geoPoint)
                 mapView.controller.setZoom(15.0)
 
-                // Optionally, add a marker at the selected location
+
                 addMarker(geoPoint)
             }
         }
@@ -216,7 +213,6 @@ class MapFragment : Fragment() {
                     suggestions.add(displayName)
                 }
 
-                // Call the callback function with the suggestions
                 withContext(Dispatchers.Main) {
                     callback(suggestions)
                 }
@@ -227,7 +223,6 @@ class MapFragment : Fragment() {
         }
     }
 
-    // Function to fetch coordinates for a selected location
     private fun fetchCoordinatesForLocation(query: String, callback: (Double, Double) -> Unit) {
         GlobalScope.launch {
             try {
@@ -240,7 +235,6 @@ class MapFragment : Fragment() {
                     val lat = location.getDouble("lat")
                     val lon = location.getDouble("lon")
 
-                    // Call the callback function with the coordinates
                     withContext(Dispatchers.Main){
                         callback(lat, lon)
                     }
@@ -251,6 +245,5 @@ class MapFragment : Fragment() {
             }
         }
     }
-/*  FavoriteFragmentDirections.ActionFavoriteFragmentToFavMealDetailsFragment action = FavoriteFragmentDirections.actionFavoriteFragmentToFavMealDetailsFragment(meal);
-        Navigation.findNavController(this.getView()).navigate(action);*/
+
 }

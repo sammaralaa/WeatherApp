@@ -43,7 +43,6 @@ object RetrofitHelper {
 
     val BASE_URL: String = "https://api.openweathermap.org/data/2.5/"
 
-    // Create OkHttpClient to add logging or other interceptors
     val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -52,7 +51,7 @@ object RetrofitHelper {
 
     val retrofitInstance = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .client(okHttpClient)  // Add the OkHttp client here
+        .client(okHttpClient)
         .baseUrl(BASE_URL)
         .build()
 

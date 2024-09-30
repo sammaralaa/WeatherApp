@@ -15,6 +15,7 @@ interface IWeatherRemoteDataSource {
         lon: Double,
         lang: String,
         unit: String): Flow<WeatherResponse>
+
     suspend fun getForcastWeather(lat: Double,
                                   lon: Double,
                                   lang : String,

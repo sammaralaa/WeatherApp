@@ -1,6 +1,8 @@
 package com.example.weatherproject.view.settings
 
 import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +24,7 @@ import com.example.weatherproject.model.shared_preferences.SharedDataSource
 import com.example.weatherproject.network.RetrofitHelper
 import com.example.weatherproject.network.remote.WeatherRemoteDataSource
 import com.example.weatherproject.utilitis
+import com.example.weatherproject.view.home.HomeActivity
 import com.example.weatherproject.view_model.home.HomeFragmentViewModel
 import com.example.weatherproject.view_model.home.HomeFragmentViewModelFactory
 import java.util.Locale
@@ -139,11 +142,12 @@ class SettingsFragment : Fragment() {
         languageGroup.setOnCheckedChangeListener{group, checkedId ->
             var u = utilitis()
             if(arabicButton.id == checkedId){
-                u.setAppLocale("ar",requireContext())
+                setAppLocaleS("ar",requireContext())
                 viewModel.saveData("lang","ar")
             }else if(englishButton.id == checkedId){
-                u.setAppLocale("en",requireContext())
+                setAppLocaleS("en",requireContext())
                 viewModel.saveData("lang","en")
+
             }
             findNavController().navigate(R.id.action_settingsFragment_self)
         }
@@ -186,4 +190,16 @@ class SettingsFragment : Fragment() {
 fun showConfermationDialog(msg : String){
 
 }
+    fun setAppLocaleS(languageCode: String, context: Context) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+
+        resources.updateConfiguration(config, resources.displayMetrics)
+        val intent = Intent(requireContext(), HomeActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
 }
